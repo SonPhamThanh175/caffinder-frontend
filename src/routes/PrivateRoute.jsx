@@ -10,7 +10,7 @@ const PrivateRoute = ({ allowedRoles }) => {
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    const redirectPath = `/${user.role}/dashboard`;
+    const redirectPath = `/${user.role}`;
     return <Navigate to={redirectPath} replace />;
   }
 

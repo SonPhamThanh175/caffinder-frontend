@@ -37,7 +37,6 @@ const handleLoginSubmit = async (values, { setSubmitting }) => {
 
         enqueueSnackbar('☕ Welcome back to Caffinder!', { variant: 'success' });
 
-        // Redirect dựa trên role của user
         const userRole = result.user.role;
         console.log('👤 User role:', userRole);
         
@@ -49,7 +48,7 @@ const handleLoginSubmit = async (values, { setSubmitting }) => {
                 navigate('/owner/dashboard');
                 break;
             case 'user':
-                navigate('/user/dashboard');
+                navigate('/user');
                 break;
             default:
                 navigate('/');

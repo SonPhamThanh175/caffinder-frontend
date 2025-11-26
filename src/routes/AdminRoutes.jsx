@@ -5,7 +5,7 @@ import AdminLayout from '../layouts/AdminLayout';
 const DashboardHome = lazy(() => import('../modules/Dashboard/pages/DashboardHome'));
 const UserList = lazy(() => import('../modules/Users/pages/UserList'));
 const UserDetail = lazy(() => import('../modules/Users/pages/UserDetail'));
-const ProductList = lazy(() => import('../modules/Products/pages/ProductList'));
+const ProductList = lazy(() => import('../modules/Products/pages/ProductList/ProductList'));
 const OrderList = lazy(() => import('../modules/Orders/pages/OrderList'));
 
 const AdminRoutes = {

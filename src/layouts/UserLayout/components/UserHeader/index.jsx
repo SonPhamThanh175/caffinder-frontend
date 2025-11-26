@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Home,
   Search,
@@ -14,25 +14,24 @@ import {
   Settings,
   Clock,
   LogOut,
-  Gift,
-  ShoppingBasket
+  Gift
 } from 'lucide-react';
-import './style.css';
+import './UserLayout.css';
 
-const UserLayout = () => {
+const UserHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   
-  const user = JSON.parse(localStorage.getItem('user') || '{}');
-
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
-    navigate('/auth/login');
-  };
+  // Get user from memory instead of localStorage
+  const [user] = useState({
+    displayName: 'SonUser',
+    username: 'SonUser',
+    role: 'user',
+    avatar: null
+  });
 
   useEffect(() => {
     const handleScroll = () => {
@@ -57,9 +56,12 @@ const UserLayout = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const handleLogout = () => {
+    navigate('/auth/login');
+  };
+
   const navItems = [
-    { path: '/user', label: 'Home', icon: Home },
-    { path: '/user/products', label: 'Products', icon: ShoppingBasket },
+    { path: '/user/home', label: 'Home', icon: Home },
     { path: '/user/search', label: 'Find Shops', icon: Search },
     { path: '/user/orders', label: 'My Orders', icon: ShoppingBag },
     { path: '/user/favorites', label: 'Favorites', icon: Heart }
@@ -68,18 +70,16 @@ const UserLayout = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className="user-layout">
-      {/* Top Navigation Header */}
+    <>
       <header className={`user-header ${isScrolled ? 'scrolled' : ''}`}>
         <div className="header-container">
-          {/* Logo */}
-          <div 
+          <a 
             className="header-logo" 
             onClick={() => navigate('/user/home')}
           >
             <span className="logo-icon">☕</span>
             <span className="logo-text">Caffinder</span>
-          </div>
+          </a>
 
           {/* Desktop Navigation */}
           <nav className="header-nav">
@@ -135,7 +135,11 @@ const UserLayout = () => {
               >
                 <Menu size={18} />
                 <div className="user-avatar">
-                  {user?.displayName?.charAt(0).toUpperCase() || 'U'}
+                  {user.avatar ? (
+                    <img src={user.avatar} alt={user.displayName} />
+                  ) : (
+                    user.displayName.charAt(0).toUpperCase()
+                  )}
                 </div>
               </button>
 
@@ -143,12 +147,8 @@ const UserLayout = () => {
               {showUserMenu && (
                 <div className="user-dropdown">
                   <div className="dropdown-header">
-                    <div className="dropdown-user-name">
-                      {user?.displayName || 'User'}
-                    </div>
-                    <div className="dropdown-user-email">
-                      {user?.username || user?.email || 'user@example.com'}
-                    </div>
+                    <div className="dropdown-user-name">{user.displayName}</div>
+                    <div className="dropdown-user-email">{user.username}</div>
                   </div>
 
                   <div className="dropdown-section">
@@ -251,12 +251,8 @@ const UserLayout = () => {
           <div className="mobile-menu-content">
             {/* User Info in Mobile */}
             <div className="dropdown-header">
-              <div className="dropdown-user-name">
-                {user?.displayName || 'User'}
-              </div>
-              <div className="dropdown-user-email">
-                {user?.username || user?.email || 'user@example.com'}
-              </div>
+              <div className="dropdown-user-name">{user.displayName}</div>
+              <div className="dropdown-user-email">{user.username}</div>
             </div>
 
             <div className="mobile-menu-divider" />
@@ -325,107 +321,8 @@ const UserLayout = () => {
           </div>
         </div>
       )}
-
-      {/* Main Content Area */}
-      <main className="user-main">
-        <Outlet />
-      </main>
-
-      {/* Footer */}
-      <footer className="user-footer">
-        <div className="footer-container">
-          <div className="footer-content">
-            {/* Brand Section */}
-            <div className="footer-brand">
-              <div className="footer-logo">
-                <span className="footer-logo-icon">☕</span>
-                <span className="footer-logo-text">Caffinder</span>
-              </div>
-              <p className="footer-description">
-                Discover the best coffee shops in your area. 
-                Order your favorite drinks and enjoy convenient delivery.
-              </p>
-            </div>
-
-            {/* Company Links */}
-            <div className="footer-column">
-              <h4>Company</h4>
-              <div className="footer-links">
-                <a className="footer-link" onClick={() => navigate('/about')}>
-                  About Us
-                </a>
-                <a className="footer-link" onClick={() => navigate('/contact')}>
-                  Contact
-                </a>
-                <a className="footer-link" onClick={() => navigate('/careers')}>
-                  Careers
-                </a>
-                <a className="footer-link" onClick={() => navigate('/blog')}>
-                  Blog
-                </a>
-              </div>
-            </div>
-
-            {/* Support Links */}
-            <div className="footer-column">
-              <h4>Support</h4>
-              <div className="footer-links">
-                <a className="footer-link" onClick={() => navigate('/help')}>
-                  Help Center
-                </a>
-                <a className="footer-link" onClick={() => navigate('/terms')}>
-                  Terms of Service
-                </a>
-                <a className="footer-link" onClick={() => navigate('/privacy')}>
-                  Privacy Policy
-                </a>
-                <a className="footer-link" onClick={() => navigate('/faq')}>
-                  FAQ
-                </a>
-              </div>
-            </div>
-
-            {/* Discover Links */}
-            <div className="footer-column">
-              <h4>Discover</h4>
-              <div className="footer-links">
-                <a className="footer-link" onClick={() => navigate('/user/search')}>
-                  Popular Shops
-                </a>
-                <a className="footer-link" onClick={() => navigate('/user/new')}>
-                  New Arrivals
-                </a>
-                <a className="footer-link" onClick={() => navigate('/user/offers')}>
-                  Special Offers
-                </a>
-                <a className="footer-link" onClick={() => navigate('/user/rewards')}>
-                  Rewards Program
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Footer Bottom */}
-          <div className="footer-bottom">
-            <p className="footer-copyright">
-              © {new Date().getFullYear()} Caffinder. All rights reserved.
-            </p>
-            <div className="footer-social">
-              <a className="social-link" href="#" title="Facebook">
-                <span>f</span>
-              </a>
-              <a className="social-link" href="#" title="Instagram">
-                <span>📷</span>
-              </a>
-              <a className="social-link" href="#" title="Twitter">
-                <span>🐦</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+    </>
   );
 };
 
-export default UserLayout;
+export default UserHeader;

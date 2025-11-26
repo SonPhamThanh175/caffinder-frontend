@@ -14,7 +14,7 @@ const RoleBasedRedirect = () => {
     case 'owner':
       return <Navigate to="/owner/dashboard" replace />;
     case 'user':
-      return <Navigate to="/user/dashboard" replace />;
+      return <Navigate to="/user" replace />;
     default:
       return <Navigate to="/auth/login" replace />;
   }

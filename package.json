@@ -15,6 +15,7 @@
     "init": "^0.1.2",
     "lucide-react": "^0.554.0",
     "notistack": "^3.0.2",
+    "query-string": "^9.3.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-redux": "^9.2.0",

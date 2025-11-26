@@ -3,7 +3,11 @@ import PropTypes from 'prop-types'
 
 function DashboardHome(props) {
   return (
-    <div>DashboardHome</div>
+    <div style={{
+      height:'1000px',
+      color:'white',
+      width:'100px'
+    }}>DashboardHome</div>
   )
 }
 

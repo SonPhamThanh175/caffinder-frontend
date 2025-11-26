@@ -18,6 +18,36 @@ const decodeToken = (token) => {
   }
 };
 
+const getCurrentLocation = () => {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error('Geolocation is not supported by your browser'));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+      },
+      (error) => {
+        console.error('Error getting location:', error);
+        resolve({
+          latitude: null,
+          longitude: null,
+        });
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 0,
+      }
+    );
+  });
+};
+
 export const register = createAsyncThunk(
   'user/register',
   async (payload) => {
@@ -32,15 +62,18 @@ export const login = createAsyncThunk(
     const data = await userApi.login(payload);
     
     const token = data.accessToken.split(' ')[1];
-    
     const decodedUser = decodeToken(token);
+    
+    const location = await getCurrentLocation();
     
     localStorage.setItem('accessToken', token);
     localStorage.setItem('user', JSON.stringify(decodedUser));
+    localStorage.setItem('userLocation', JSON.stringify(location));
     
     return {
       user: decodedUser,
       accessToken: token,
+      location: location,
     };
   }
 );
@@ -62,6 +95,9 @@ const userSlice = createSlice({
         ? JSON.parse(localStorage.getItem('user')) 
         : null,
       accessToken: localStorage.getItem('accessToken') || null,
+      location: localStorage.getItem('userLocation')
+        ? JSON.parse(localStorage.getItem('userLocation'))
+        : { latitude: null, longitude: null },
     },
     settings: {},
   },
@@ -70,11 +106,17 @@ const userSlice = createSlice({
       localStorage.removeItem('accessToken');
       localStorage.removeItem('user');
       localStorage.removeItem('cart');
+      localStorage.removeItem('userLocation');
       state.current = {
         user: null,
         accessToken: null,
+        location: { latitude: null, longitude: null },
       };
       state.settings = {};
+    },
+    updateLocation(state, action) {
+      state.current.location = action.payload;
+      localStorage.setItem('userLocation', JSON.stringify(action.payload));
     },
   },
   extraReducers: (builder) => {
@@ -91,5 +133,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout } = userSlice.actions;
+export const { logout, updateLocation } = userSlice.actions;
 export default userSlice.reducer;
