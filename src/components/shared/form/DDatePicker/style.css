@@ -1,0 +1,27 @@
+.d-datepicker {
+    margin-bottom: 20px;
+}
+
+.d-datepicker-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.d-datepicker-label .required-mark {
+    color: #ff4d4f;
+    margin-left: 4px;
+}
+
+.d-datepicker-wrapper {
+    position: relative;
+}
+
+.d-datepicker .error-message {
+    display: block;
+    color: #ff4d4f;
+    font-size: 12px;
+    margin-top: 4px;
+}
