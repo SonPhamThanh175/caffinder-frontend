@@ -2,10 +2,10 @@ import { Modal, Button, Input, message, Alert, Spin } from 'antd';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import dayjs from 'dayjs';
-import DDatePicker from '../../../../../../components/shared/form/DDatePicker/DDatePicker';
-import DTimePicker from '../../../../../../components/shared/form/DTimePicker/DTimePicker';
-import DInputNumber from '../../../../../../components/shared/form/DInputNumber/DInputNumber';
-import bookingApi from '../../../../../../api/bookingApi';
+import DDatePicker from '../../../../../../../components/shared/form/DDatePicker/DDatePicker';
+import DTimePicker from '../../../../../../../components/shared/form/DTimePicker/DTimePicker';
+import DInputNumber from '../../../../../../../components/shared/form/DInputNumber/DInputNumber';
+import bookingApi from '../../../../../../../api/bookingApi';
 import './style.css';
 
 const { TextArea } = Input;

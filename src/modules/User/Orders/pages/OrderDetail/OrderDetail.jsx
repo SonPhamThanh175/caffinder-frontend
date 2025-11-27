@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, Clock, Users, MapPin, Phone, User, ArrowLeft } from 'lucide-react';
+import { Calendar, Clock, Users, MapPin, Phone, User, ArrowLeft, Heart } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
-import orderApi from '../../../../api/orderService';
+import { message } from 'antd';
+import orderApi from '../../../../../api/orderService';
+import favoriteApi from '../../../../../api/favoriteApi';
 import './style.css';
 
 const OrderDetail = () => {
@@ -9,6 +11,8 @@ const OrderDetail = () => {
   const { id } = useParams();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [togglingFav, setTogglingFav] = useState(false);
 
   const statusConfig = {
     pending: { label: 'Chờ xác nhận', color: 'status-pending' },
@@ -21,6 +25,7 @@ const OrderDetail = () => {
 
   useEffect(() => {
     fetchOrderDetail();
+    checkFavoriteStatus();
   }, [id]);
 
   const fetchOrderDetail = async () => {
@@ -32,6 +37,42 @@ const OrderDetail = () => {
       console.error('Error fetching order detail:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const checkFavoriteStatus = async () => {
+    try {
+      const response = await favoriteApi.getMyFavorite();
+      const favorites = response.favorites || [];
+      const orderResponse = await orderApi.getInfoById(id);
+      const shopId = orderResponse.booking.shop.id;
+      setIsFavorite(favorites.some(fav => fav.shop.id === shopId));
+    } catch (error) {
+      console.error('Error checking favorite status:', error);
+    }
+  };
+
+  const handleToggleFavorite = async () => {
+    if (!order) return;
+    
+    try {
+      setTogglingFav(true);
+      const shopId = order.shop.id;
+      
+      if (isFavorite) {
+        await favoriteApi.delete(shopId);
+        setIsFavorite(false);
+        message.success('Đã xóa khỏi yêu thích');
+      } else {
+        await favoriteApi.add(shopId);
+        setIsFavorite(true);
+        message.success('Đã thêm vào yêu thích');
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      message.error('Có lỗi xảy ra');
+    } finally {
+      setTogglingFav(false);
     }
   };
 
@@ -84,7 +125,6 @@ const OrderDetail = () => {
 
   return (
     <div className="order-detail-container">
-      {/* Header */}
       <div className="order-detail-header">
         <div className="header-content">
           <button onClick={handleBack} className="back-button">
@@ -97,23 +137,35 @@ const OrderDetail = () => {
       </div>
 
       <div className="order-detail-content">
-        {/* Status Badge */}
         <div className="status-container">
           <span className={`status-badge-large ${statusConfig[order.status].color}`}>
             {statusConfig[order.status].label}
           </span>
         </div>
 
-        {/* Shop Info */}
         <div className="info-card shop-info">
-          <img
-            src={order.shop.img?.[0] || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400'}
-            alt={order.shop.name}
-            className="shop-image"
-            onError={(e) => {
-              e.target.src = 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400';
-            }}
-          />
+          <div className="shop-image-detail-wrapper">
+            <img
+              src={order.shop.img?.[0] || 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400'}
+              alt={order.shop.name}
+              className="shop-image"
+              onError={(e) => {
+                e.target.src = 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400';
+              }}
+            />
+            <button
+              className={`favorite-btn-detail ${isFavorite ? 'active' : ''}`}
+              onClick={handleToggleFavorite}
+              disabled={togglingFav}
+            >
+              <Heart
+                size={24}
+                fill={isFavorite ? '#EF4444' : 'none'}
+                color={isFavorite ? '#EF4444' : '#FFFFFF'}
+              />
+            </button>
+          </div>
+          
           <div className="shop-details">
             <h2 className="shop-name">{order.shop.name}</h2>
             <div className="shop-address">
@@ -142,7 +194,6 @@ const OrderDetail = () => {
           </div>
         </div>
 
-        {/* Booking Info */}
         <div className="info-card">
           <h3 className="card-title">Thông tin đặt bàn</h3>
           <div className="info-list">
@@ -172,7 +223,6 @@ const OrderDetail = () => {
           </div>
         </div>
 
-        {/* Customer Info */}
         <div className="info-card">
           <h3 className="card-title">Thông tin khách hàng</h3>
           <div className="info-list">
@@ -199,7 +249,6 @@ const OrderDetail = () => {
           </div>
         </div>
 
-        {/* Timeline */}
         <div className="info-card">
           <h3 className="card-title">Lịch sử đơn hàng</h3>
           <div className="timeline">

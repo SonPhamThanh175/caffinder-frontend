@@ -7,7 +7,7 @@ const orderApi = {
         return OrderList;
     },
 
-    getInfoById(id) {
+    async getInfoById(id) {
         const url = `/api/bookings/${id}`;
         return axiosClient.get(url);
     },

@@ -6,7 +6,7 @@ import AdminRoutes from './AdminRoutes';
 import OwnerRoutes from './OwnerRoutes';
 import UserRoutes from './UserRoutes';
 import NotFound from '../pages/NotFound/NotFound';
-import { LoginPage } from '../modules/Auth/pages/index';
+import { LoginPage } from '../pages/Auth/pages/index';
 // import UnauthorizedPage from '../pages/UnauthorizedPage';
 
 const LoadingFallback = () => (

@@ -7,22 +7,22 @@ const shopsApi = {
         return ShopsList;
     },
 
-    getInfoById(id) {
+    async getInfoById(id) {
         const url = `/api/shops/${id}`;
         return axiosClient.get(url);
     },
 
-    add(data) {
+    async add(data) {
         const url = '/api/shops';
         return axiosClient.post(url, data);
     },
 
-    update(data) {
+    async update(data) {
         const url = `/api/shops/${data.id}`;
         return axiosClient.patch(url, data);
     },
 
-    remove(id) {
+    async remove(id) {
         const url = `/api/shops/${id}`;
         return axiosClient.delete(url);
     },

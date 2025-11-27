@@ -2,10 +2,12 @@ import { lazy } from 'react';
 import UserLayout from '../layouts/UserLayout';
 
 const Home = lazy(() => import('../pages/Home/Home'));
-const ShopsList = lazy(() => import('../modules/Products/pages/ShopsList/ShopsList'));
-const ShopsDetail = lazy(() => import('../modules/Products/pages/ShopsDetail/ShopsDetail'));
-const OrderList = lazy(() => import('../modules/Orders/pages/OrderList/OrderList'));
-const OrderDetail = lazy(() => import('../modules/Orders/pages/OrderDetail/OrderDetail'));
+const ShopsList = lazy(() => import('../modules/User/Products/pages/ShopsList/ShopsList'));
+const ShopsDetail = lazy(() => import('../modules/User/Products/pages/ShopsDetail/ShopsDetail'));
+const OrderList = lazy(() => import('../modules/User/Orders/pages/OrderList/OrderList'));
+const OrderDetail = lazy(() => import('../modules/User/Orders/pages/OrderDetail/OrderDetail'));
+const Favorite = lazy(() => import('../modules/User/Favorites/Favorite'));
+
 
 const UserRoutes = {
     path: '/user',
@@ -27,9 +29,13 @@ const UserRoutes = {
             path: 'orders',
             element: <OrderList />,
         },
-                {
+        {
             path: 'orders/:id',
             element: <OrderDetail />,
+        },
+        {
+            path: 'favorites',
+            element: <Favorite />,
         },
     ],
 };

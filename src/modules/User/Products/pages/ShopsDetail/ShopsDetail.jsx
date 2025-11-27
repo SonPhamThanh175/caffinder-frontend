@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { Heart } from 'lucide-react';
+import { message } from 'antd';
 import './style.css';
-import shopsApi from '../../../../api/shopsApi';
+import shopsApi from '../../../../../api/shopsApi';
+import favoriteApi from '../../../../../api/favoriteApi';
 import BookingModal from '../ShopsDetail/components/BookingModal/BookingModal';
 
 const ShopsDetail = () => {
@@ -11,9 +14,12 @@ const ShopsDetail = () => {
     const [loading, setLoading] = useState(true);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [bookingModalVisible, setBookingModalVisible] = useState(false);
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [togglingFav, setTogglingFav] = useState(false);
 
     useEffect(() => {
         fetchShopDetail();
+        checkFavoriteStatus();
     }, [id]);
 
     const fetchShopDetail = async () => {
@@ -21,12 +27,43 @@ const ShopsDetail = () => {
             setLoading(true);
             const response = await shopsApi.getInfoById(id);
             console.log("response", response);
-            
             setShop(response.shop);
         } catch (error) {
             console.error('Error fetching shop details:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const checkFavoriteStatus = async () => {
+        try {
+            const response = await favoriteApi.getMyFavorite();
+            const favorites = response.data || [];
+            setIsFavorite(favorites.some(fav => fav.shop.id === parseInt(id)));
+        } catch (error) {
+            console.error('Error checking favorite status:', error);
+        }
+    };
+
+    const handleToggleFavorite = async (e) => {
+        e.stopPropagation();
+        try {
+            setTogglingFav(true);
+            
+            if (isFavorite) {
+                await favoriteApi.delete(id);
+                setIsFavorite(false);
+                message.success('Đã xóa khỏi yêu thích');
+            } else {
+                await favoriteApi.add(id);
+                setIsFavorite(true);
+                message.success('Đã thêm vào yêu thích');
+            }
+        } catch (error) {
+            console.error('Error toggling favorite:', error);
+            message.error('Có lỗi xảy ra');
+        } finally {
+            setTogglingFav(false);
         }
     };
 
@@ -75,6 +112,17 @@ const ShopsDetail = () => {
                             src={shop.img[currentImageIndex]} 
                             alt={shop.name}
                         />
+                        <button
+                            className={`favorite-btn-shop-detail ${isFavorite ? 'active' : ''}`}
+                            onClick={handleToggleFavorite}
+                            disabled={togglingFav}
+                        >
+                            <Heart
+                                size={24}
+                                fill={isFavorite ? '#EF4444' : 'none'}
+                                color={isFavorite ? '#EF4444' : '#757575'}
+                            />
+                        </button>
                         {shop.img.length > 1 && (
                             <>
                                 <button className="nav-btn prev" onClick={handlePrevImage}>
