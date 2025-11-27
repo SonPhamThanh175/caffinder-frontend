@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import queryString from 'query-string';
+import { message } from 'antd';
 import { 
   Search, 
   MapPin, 
@@ -14,7 +15,8 @@ import {
   Users
 } from 'lucide-react';
 import './style.css'
-import shopsApi from '../../../../api/shopsApi';
+import shopsApi from '../../../../../api/shopsApi';
+import favoriteApi from '../../../../../api/favoriteApi';
 
 const ShopsList = () => {
   const navigate = useNavigate();
@@ -25,6 +27,8 @@ const ShopsList = () => {
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [favorites, setFavorites] = useState(new Set());
+  const [togglingFav, setTogglingFav] = useState(null);
 
   const queryParams = useMemo(() => {
     const params = queryString.parse(location.search);
@@ -48,33 +52,73 @@ const ShopsList = () => {
   }, [location.search]);
 
   useEffect(() => {
-    const fetchShops = async () => {
-      if (!queryParams.latitude || !queryParams.longitude) {
-        console.error('Location coordinates are required');
-        setLoading(false);
-        return;
-      }
-
-      setLoading(true);
-      try {
-        const response = await shopsApi.getAll(queryParams);
-        console.log("response", response);
-        
-        setShopList(response?.data || []);
-        setTotalShops(response?.pagination?.total || 0);
-      } catch (error) {
-        console.error('Failed to fetch shops:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchShops();
+    fetchFavorites();
   }, [queryParams]);
 
   useEffect(() => {
     setSearchText(queryParams.search || '');
   }, [queryParams.search]);
+
+  const fetchFavorites = async () => {
+    try {
+      const response = await favoriteApi.getMyFavorite();
+      console.log("response",response);
+      
+      const favShopIds = new Set(response.data?.map(fav => fav.shop.id) || []);
+      setFavorites(favShopIds);
+    } catch (error) {
+      console.error('Error fetching favorites:', error);
+    }
+  };
+
+  const fetchShops = async () => {
+    if (!queryParams.latitude || !queryParams.longitude) {
+      console.error('Location coordinates are required');
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await shopsApi.getAll(queryParams);
+      console.log("response", response);
+      
+      setShopList(response?.data || []);
+      setTotalShops(response?.pagination?.total || 0);
+    } catch (error) {
+      console.error('Failed to fetch shops:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleToggleFavorite = async (shopId, e) => {
+    e.stopPropagation();
+    try {
+      setTogglingFav(shopId);
+      const isFavorite = favorites.has(shopId);
+      
+      if (isFavorite) {
+        await favoriteApi.delete(shopId);
+        setFavorites(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(shopId);
+          return newSet;
+        });
+        message.success('Đã xóa khỏi yêu thích');
+      } else {
+        await favoriteApi.add(shopId);
+        setFavorites(prev => new Set([...prev, shopId]));
+        message.success('Đã thêm vào yêu thích');
+      }
+    } catch (error) {
+      console.error('Error toggling favorite:', error);
+      message.error('Có lỗi xảy ra');
+    } finally {
+      setTogglingFav(null);
+    }
+  };
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -99,20 +143,11 @@ const ShopsList = () => {
     navigate(`?${queryString.stringify(params)}`);
   };
 
-  const toggleFavorite = (shopId) => {
-    setShopList(prev => 
-      prev.map(shop => 
-        shop.id === shopId ? { ...shop, isFavorite: !shop.isFavorite } : shop
-      )
-    );
-  };
-
   const sortOptions = [
     { value: 'newest', label: 'Newest', icon: Star },
     { value: 'most_favorite', label: 'Most Popular', icon: Flame }
   ];
 
-  // Helper function to check if shop is open
   const isShopOpen = (openTime, closeTime) => {
     const now = new Date();
     const currentTime = now.getHours() * 60 + now.getMinutes();
@@ -160,7 +195,6 @@ const ShopsList = () => {
         </button>
       </form>
 
-      {/* Filters Panel */}
       {showFilters && (
         <div className="filters-panel">
           <div className="filter-section">
@@ -197,7 +231,6 @@ const ShopsList = () => {
         </div>
       )}
 
-      {/* Active Filters */}
       {(queryParams.search || queryParams.radius !== 5) && (
         <div className="active-filters">
           {queryParams.search && (
@@ -219,13 +252,11 @@ const ShopsList = () => {
         </div>
       )}
 
-      {/* Results Header */}
       <div className="results-header">
         <h3>{totalShops} coffee shops found</h3>
         <p className="results-subtitle">Near your location</p>
       </div>
 
-      {/* Loading State */}
       {loading && (
         <div className="loading-container">
           <div className="loading-spinner"></div>
@@ -233,7 +264,6 @@ const ShopsList = () => {
         </div>
       )}
 
-      {/* Shop List */}
       {!loading && (
         <div className="shop-list">
           {shopList.map((shop) => {
@@ -250,21 +280,22 @@ const ShopsList = () => {
                       <div className="shop-emoji">☕</div>
                     )}
                     {!isOpen && <div className="closed-badge">Closed</div>}
+                    <button
+                      className={`favorite-btn-list ${favorites.has(shop.id) ? 'active' : ''}`}
+                      onClick={(e) => handleToggleFavorite(shop.id, e)}
+                      disabled={togglingFav === shop.id}
+                    >
+                      <Heart
+                        size={20}
+                        fill={favorites.has(shop.id) ? '#EF4444' : 'none'}
+                        color={favorites.has(shop.id) ? '#EF4444' : '#757575'}
+                      />
+                    </button>
                   </div>
 
                   <div className="shop-info">
                     <div className="shop-header">
                       <h4 className="shop-name">{shop.name}</h4>
-                      <button
-                        onClick={() => toggleFavorite(shop.id)}
-                        className="favorite-btn"
-                      >
-                        <Heart
-                          size={20}
-                          className={shop.isFavorite ? 'filled' : ''}
-                          fill={shop.isFavorite ? 'currentColor' : 'none'}
-                        />
-                      </button>
                     </div>
 
                     <div className="shop-address">
@@ -322,7 +353,6 @@ const ShopsList = () => {
         </div>
       )}
 
-      {/* Empty State */}
       {!loading && shopList.length === 0 && (
         <div className="empty-state">
           <div className="empty-icon">🔍</div>
@@ -331,7 +361,6 @@ const ShopsList = () => {
         </div>
       )}
 
-      {/* Pagination */}
       {!loading && totalShops > queryParams.limit && (
         <div className="pagination">
           <button

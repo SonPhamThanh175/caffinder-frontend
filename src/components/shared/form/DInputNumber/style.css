@@ -1,0 +1,27 @@
+.d-input-number {
+    margin-bottom: 20px;
+}
+
+.d-input-number-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.d-input-number-label .required-mark {
+    color: #ff4d4f;
+    margin-left: 4px;
+}
+
+.d-input-number-wrapper {
+    position: relative;
+}
+
+.d-input-number .error-message {
+    display: block;
+    color: #ff4d4f;
+    font-size: 12px;
+    margin-top: 4px;
+}

@@ -1,20 +1,20 @@
 import axiosClient from "./axiosClient"
 
 const userApi = {
-    register(data){
+    async register(data){
         const url = 'api/auth/register';
         return axiosClient.post(url,data)
     },
 
-    login(data){
+    async login(data){
         const url = 'api/auth/login';
         return axiosClient.post(url,data)
     },
-    getInfo(userId){
+    async getInfo(userId){
         const url = `api/auth/${userId}`;
         return axiosClient.get(url)
     },
-    update(userId, data) {
+    async update(userId, data) {
         const url = `api/users/${userId}`;
         return axiosClient.put(url, data);
     }
