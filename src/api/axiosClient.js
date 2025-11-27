@@ -11,7 +11,7 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(
     function (config) {
         // Retrieve the accessToken from localStorage or any other storage mechanism
-        const accessToken = localStorage.getItem('access_token'); // or get it from your state management
+        const accessToken = localStorage.getItem('accessToken'); // or get it from your state management
 
         // If accessToken exists, set the Authorization header
         if (accessToken) {

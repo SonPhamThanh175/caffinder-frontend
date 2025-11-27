@@ -18,36 +18,6 @@ const decodeToken = (token) => {
   }
 };
 
-const getCurrentLocation = () => {
-  return new Promise((resolve, reject) => {
-    if (!navigator.geolocation) {
-      reject(new Error('Geolocation is not supported by your browser'));
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        resolve({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-        });
-      },
-      (error) => {
-        console.error('Error getting location:', error);
-        resolve({
-          latitude: null,
-          longitude: null,
-        });
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 5000,
-        maximumAge: 0,
-      }
-    );
-  });
-};
-
 export const register = createAsyncThunk(
   'user/register',
   async (payload) => {
@@ -64,16 +34,12 @@ export const login = createAsyncThunk(
     const token = data.accessToken.split(' ')[1];
     const decodedUser = decodeToken(token);
     
-    const location = await getCurrentLocation();
-    
     localStorage.setItem('accessToken', token);
     localStorage.setItem('user', JSON.stringify(decodedUser));
-    localStorage.setItem('userLocation', JSON.stringify(location));
     
     return {
       user: decodedUser,
       accessToken: token,
-      location: location,
     };
   }
 );
@@ -97,9 +63,11 @@ const userSlice = createSlice({
       accessToken: localStorage.getItem('accessToken') || null,
       location: localStorage.getItem('userLocation')
         ? JSON.parse(localStorage.getItem('userLocation'))
-        : { latitude: null, longitude: null },
+        : null,
     },
-    settings: {},
+    settings: {
+      showLocationModal: false,
+    },
   },
   reducers: {
     logout(state) {
@@ -110,9 +78,17 @@ const userSlice = createSlice({
       state.current = {
         user: null,
         accessToken: null,
-        location: { latitude: null, longitude: null },
+        location: null,
       };
-      state.settings = {};
+      state.settings = {
+        showLocationModal: false,
+      };
+    },
+    showLocationModal(state) {
+      state.settings.showLocationModal = true;
+    },
+    hideLocationModal(state) {
+      state.settings.showLocationModal = false;
     },
     updateLocation(state, action) {
       state.current.location = action.payload;
@@ -126,6 +102,10 @@ const userSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.current = action.payload;
+        const savedLocation = localStorage.getItem('userLocation');
+        if (!savedLocation) {
+          state.settings.showLocationModal = true;
+        }
       })
       .addCase(update.fulfilled, (state, action) => {
         state.current = action.payload;
@@ -133,5 +113,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { logout, updateLocation } = userSlice.actions;
+export const { logout, showLocationModal, hideLocationModal, updateLocation } = userSlice.actions;
 export default userSlice.reducer;

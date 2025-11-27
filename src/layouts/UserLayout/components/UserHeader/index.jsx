@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { 
   Home,
   Search,
   ShoppingBag,
   User,
   Heart,
-  MapPin,
-  ChevronDown,
   Menu,
   X,
   Bell,
@@ -16,16 +15,22 @@ import {
   LogOut,
   Gift
 } from 'lucide-react';
+import LocationSelector from './LocationSelector';
+import { updateLocation } from '../../redux/slices/userSlice';
 import './UserLayout.css';
 
 const UserHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
+  
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   
-  // Get user from memory instead of localStorage
+  // Lấy location từ Redux
+  const currentLocation = useSelector(state => state.user.current.location);
+  
   const [user] = useState({
     displayName: 'SonUser',
     username: 'SonUser',
@@ -60,8 +65,12 @@ const UserHeader = () => {
     navigate('/auth/login');
   };
 
+  const handleLocationChange = (newLocation) => {
+    dispatch(updateLocation(newLocation));
+  };
+
   const navItems = [
-    { path: '/user/home', label: 'Home', icon: Home },
+    { path: '/user', label: 'Home', icon: Home },
     { path: '/user/search', label: 'Find Shops', icon: Search },
     { path: '/user/orders', label: 'My Orders', icon: ShoppingBag },
     { path: '/user/favorites', label: 'Favorites', icon: Heart }
@@ -75,7 +84,7 @@ const UserHeader = () => {
         <div className="header-container">
           <a 
             className="header-logo" 
-            onClick={() => navigate('/user/home')}
+            onClick={() => navigate('/user')}
           >
             <span className="logo-icon">☕</span>
             <span className="logo-text">Caffinder</span>
@@ -96,17 +105,11 @@ const UserHeader = () => {
 
           {/* Header Actions */}
           <div className="header-actions">
-            {/* Location Selector */}
-            <div className="location-selector">
-              <MapPin size={18} className="location-icon" />
-              <div className="location-info">
-                <span className="location-label">Deliver to</span>
-                <div className="location-value">
-                  <span>Current Location</span>
-                  <ChevronDown size={14} />
-                </div>
-              </div>
-            </div>
+            {/* Location Selector - UPDATED */}
+            <LocationSelector 
+              currentLocation={currentLocation}
+              onLocationChange={handleLocationChange}
+            />
 
             {/* Favorites Button */}
             <button 
@@ -143,7 +146,6 @@ const UserHeader = () => {
                 </div>
               </button>
 
-              {/* User Dropdown */}
               {showUserMenu && (
                 <div className="user-dropdown">
                   <div className="dropdown-header">
@@ -249,7 +251,6 @@ const UserHeader = () => {
       {showMobileMenu && (
         <div className="mobile-menu-overlay">
           <div className="mobile-menu-content">
-            {/* User Info in Mobile */}
             <div className="dropdown-header">
               <div className="dropdown-user-name">{user.displayName}</div>
               <div className="dropdown-user-email">{user.username}</div>
@@ -257,7 +258,6 @@ const UserHeader = () => {
 
             <div className="mobile-menu-divider" />
 
-            {/* Navigation Items */}
             {navItems.map((item) => {
               const Icon = item.icon;
               return (
@@ -277,7 +277,6 @@ const UserHeader = () => {
 
             <div className="mobile-menu-divider" />
 
-            {/* Additional Menu Items */}
             <button 
               className="mobile-nav-item"
               onClick={() => {

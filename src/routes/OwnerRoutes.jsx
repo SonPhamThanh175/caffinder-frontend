@@ -2,7 +2,7 @@ import { lazy } from 'react';
 import OwnerLayout from '../layouts/OwnerLayout';
 
 const DashboardHome = lazy(() => import('../modules/Dashboard/pages/DashboardHome'));
-const ProductList = lazy(() => import('../modules/Products/pages/ProductList/ProductList'));
+const ShopsList = lazy(() => import('../modules/Products/pages/ShopsList/ShopsList'));
 const OrderList = lazy(() => import('../modules/Orders/pages/OrderList'));
 
 const OwnerRoutes = {
@@ -15,7 +15,7 @@ const OwnerRoutes = {
     },
     {
       path: 'products',
-      element: <ProductList />
+      element: <ShopsList />
     },
     {
       path: 'orders',

@@ -9,13 +9,14 @@ import {
   Flame,
   SlidersHorizontal,
   X,
-  ChevronDown,
   Heart,
-  Navigation
+  Navigation,
+  Users
 } from 'lucide-react';
 import './style.css'
-import productsApi from '../../../../api/productApi';
-const ProductSearch = () => {
+import shopsApi from '../../../../api/shopsApi';
+
+const ShopsList = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -27,24 +28,40 @@ const ProductSearch = () => {
 
   const queryParams = useMemo(() => {
     const params = queryString.parse(location.search);
+    
+    const savedLocation = localStorage.getItem('userLocation');
+    const userLocation = savedLocation ? JSON.parse(savedLocation) : null;
+    
+    if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
+      console.error('Location is required. Please enable location access.');
+    }
+    
     return {
       page: Number.parseInt(params.page) || 1,
       limit: Number.parseInt(params.limit) || 10,
-      longitude: Number.parseFloat(params.longitude),
-      latitude: Number.parseFloat(params.latitude),
+      longitude: userLocation?.longitude,
+      latitude: userLocation?.latitude,
       radius: Number.parseInt(params.radius) || 5,
-      sortBy: params.sortBy || 'distance',
+      sortBy: params.sortBy || undefined,
       search: params.search || ''
     };
   }, [location.search]);
 
   useEffect(() => {
     const fetchShops = async () => {
+      if (!queryParams.latitude || !queryParams.longitude) {
+        console.error('Location coordinates are required');
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       try {
-        const response = await productsApi.getAll(queryParams);
-        setShopList(response.data);
-        setTotalShops(response.total);
+        const response = await shopsApi.getAll(queryParams);
+        console.log("response", response);
+        
+        setShopList(response?.data || []);
+        setTotalShops(response?.pagination?.total || 0);
       } catch (error) {
         console.error('Failed to fetch shops:', error);
       } finally {
@@ -76,22 +93,38 @@ const ProductSearch = () => {
       }
     });
 
+    delete params.latitude;
+    delete params.longitude;
+
     navigate(`?${queryString.stringify(params)}`);
   };
 
   const toggleFavorite = (shopId) => {
     setShopList(prev => 
       prev.map(shop => 
-        shop.id === shopId ? { ...shop, favorite: !shop.favorite } : shop
+        shop.id === shopId ? { ...shop, isFavorite: !shop.isFavorite } : shop
       )
     );
   };
 
   const sortOptions = [
-    { value: 'distance', label: 'Nearest', icon: Navigation },
-    { value: 'rating', label: 'Highest Rated', icon: Star },
+    { value: 'newest', label: 'Newest', icon: Star },
     { value: 'most_favorite', label: 'Most Popular', icon: Flame }
   ];
+
+  // Helper function to check if shop is open
+  const isShopOpen = (openTime, closeTime) => {
+    const now = new Date();
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+    
+    const [openHour, openMin] = openTime.split(':').map(Number);
+    const [closeHour, closeMin] = closeTime.split(':').map(Number);
+    
+    const openMinutes = openHour * 60 + openMin;
+    const closeMinutes = closeHour * 60 + closeMin;
+    
+    return currentTime >= openMinutes && currentTime <= closeMinutes;
+  };
 
   return (
     <div className="product-search-page">
@@ -165,7 +198,7 @@ const ProductSearch = () => {
       )}
 
       {/* Active Filters */}
-      {(queryParams.search || queryParams.radius !== 4) && (
+      {(queryParams.search || queryParams.radius !== 5) && (
         <div className="active-filters">
           {queryParams.search && (
             <div className="filter-chip">
@@ -175,10 +208,10 @@ const ProductSearch = () => {
               </button>
             </div>
           )}
-          {queryParams.radius !== 4 && (
+          {queryParams.radius !== 5 && (
             <div className="filter-chip">
               <span>Radius: {queryParams.radius}km</span>
-              <button onClick={() => updateQueryParams({ radius: 4, page: 1 })}>
+              <button onClick={() => updateQueryParams({ radius: 5, page: 1 })}>
                 <X size={14} />
               </button>
             </div>
@@ -203,69 +236,89 @@ const ProductSearch = () => {
       {/* Shop List */}
       {!loading && (
         <div className="shop-list">
-          {shopList.map((shop) => (
-            <div key={shop.id} className="shop-card">
-              <div className="shop-card-content">
-                <div className="shop-image">
-                  <div className="shop-emoji">{shop.image}</div>
-                  {!shop.isOpen && <div className="closed-badge">Closed</div>}
+          {shopList.map((shop) => {
+            const isOpen = isShopOpen(shop.openTime, shop.closeTime);
+            const mainImage = shop.img && shop.img.length > 0 ? shop.img[0] : null;
+            
+            return (
+              <div key={shop.id} className="shop-card">
+                <div className="shop-card-content">
+                  <div className="shop-image">
+                    {mainImage ? (
+                      <img src={mainImage} alt={shop.name} className="shop-img" />
+                    ) : (
+                      <div className="shop-emoji">☕</div>
+                    )}
+                    {!isOpen && <div className="closed-badge">Closed</div>}
+                  </div>
+
+                  <div className="shop-info">
+                    <div className="shop-header">
+                      <h4 className="shop-name">{shop.name}</h4>
+                      <button
+                        onClick={() => toggleFavorite(shop.id)}
+                        className="favorite-btn"
+                      >
+                        <Heart
+                          size={20}
+                          className={shop.isFavorite ? 'filled' : ''}
+                          fill={shop.isFavorite ? 'currentColor' : 'none'}
+                        />
+                      </button>
+                    </div>
+
+                    <div className="shop-address">
+                      <MapPin size={14} />
+                      <span>{shop.address}</span>
+                    </div>
+
+                    <div className="shop-meta">
+                      <div className="meta-item">
+                        <Heart size={14} fill="currentColor" />
+                        <span>{shop.favorite_count || 0}</span>
+                        <span className="meta-secondary">favorites</span>
+                      </div>
+                      <span className="meta-divider">•</span>
+                      <div className="meta-item">
+                        <Navigation size={14} />
+                        <span>{shop.distance?.text || 'N/A'}</span>
+                      </div>
+                      <span className="meta-divider">•</span>
+                      <div className="meta-item">
+                        <Users size={14} />
+                        <span>{shop.totalCapacity} seats</span>
+                      </div>
+                    </div>
+
+                    {shop.description && (
+                      <p className="shop-description">{shop.description}</p>
+                    )}
+
+                    {isOpen && (
+                      <div className="shop-status open">
+                        <Clock size={12} />
+                        <span>Open now • {shop.openTime} - {shop.closeTime}</span>
+                      </div>
+                    )}
+                    
+                    {!isOpen && (
+                      <div className="shop-status closed">
+                        <Clock size={12} />
+                        <span>Closed • Opens at {shop.openTime}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <div className="shop-info">
-                  <div className="shop-header">
-                    <h4 className="shop-name">{shop.name}</h4>
-                    <button
-                      onClick={() => toggleFavorite(shop.id)}
-                      className="favorite-btn"
-                    >
-                      <Heart
-                        size={20}
-                        className={shop.favorite ? 'filled' : ''}
-                        fill={shop.favorite ? 'currentColor' : 'none'}
-                      />
-                    </button>
-                  </div>
-
-                  <div className="shop-address">
-                    <MapPin size={14} />
-                    <span>{shop.address}</span>
-                  </div>
-
-                  <div className="shop-meta">
-                    <div className="meta-item">
-                      <Star size={14} fill="currentColor" />
-                      <span>{shop.rating}</span>
-                      <span className="meta-secondary">({shop.totalReviews})</span>
-                    </div>
-                    <span className="meta-divider">•</span>
-                    <div className="meta-item">
-                      <Navigation size={14} />
-                      <span>{shop.distance} km</span>
-                    </div>
-                    <span className="meta-divider">•</span>
-                    <span className="price-range">{shop.priceRange}</span>
-                  </div>
-
-                  <div className="shop-tags">
-                    {shop.tags.map((tag, idx) => (
-                      <span key={idx} className="tag">{tag}</span>
-                    ))}
-                  </div>
-
-                  {shop.isOpen && (
-                    <div className="shop-status open">
-                      <Clock size={12} />
-                      <span>Open now</span>
-                    </div>
-                  )}
-                </div>
+                <button 
+                  className="view-menu-btn"
+                  onClick={() => navigate(`/user/shops/${shop.id}`)}
+                >
+                  View Details
+                </button>
               </div>
-
-              <button className="view-menu-btn">
-                View Menu
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -304,4 +357,4 @@ const ProductSearch = () => {
   );
 };
 
-export default ProductSearch;
+export default ShopsList;
