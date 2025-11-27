@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './style.css';
 import shopsApi from '../../../../api/shopsApi';
+import BookingModal from '../ShopsDetail/components/BookingModal/BookingModal';
 
 const ShopsDetail = () => {
     const { id } = useParams();
@@ -9,6 +10,7 @@ const ShopsDetail = () => {
     const [shop, setShop] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [bookingModalVisible, setBookingModalVisible] = useState(false);
 
     useEffect(() => {
         fetchShopDetail();
@@ -18,7 +20,7 @@ const ShopsDetail = () => {
         try {
             setLoading(true);
             const response = await shopsApi.getInfoById(id);
-            console.log("response",response);
+            console.log("response", response);
             
             setShop(response.shop);
         } catch (error) {
@@ -42,6 +44,14 @@ const ShopsDetail = () => {
                 prev === 0 ? shop.img.length - 1 : prev - 1
             );
         }
+    };
+
+    const handleBooking = () => {
+        setBookingModalVisible(true);
+    };
+
+    const handleCloseBookingModal = () => {
+        setBookingModalVisible(false);
     };
 
     if (loading) {
@@ -143,9 +153,17 @@ const ShopsDetail = () => {
                         </div>
                     </div>
 
-                    <button className="book-btn">Đặt bàn ngay</button>
+                    <button className="book-btn" onClick={handleBooking}>
+                        Đặt bàn ngay
+                    </button>
                 </div>
             </div>
+
+            <BookingModal
+                visible={bookingModalVisible}
+                onCancel={handleCloseBookingModal}
+                shop={shop}
+            />
         </div>
     );
 };

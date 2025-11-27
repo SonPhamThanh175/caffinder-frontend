@@ -6,7 +6,7 @@ const DashboardHome = lazy(() => import('../modules/Dashboard/pages/DashboardHom
 const UserList = lazy(() => import('../modules/Admin/Users/pages/UserList'));
 const UserDetail = lazy(() => import('../modules/Admin/Users/pages/UserDetail'));
 const ShopsList = lazy(() => import('../modules/Products/pages/ShopsList/ShopsList'));
-const OrderList = lazy(() => import('../modules/Orders/pages/OrderList'));
+const OrderList = lazy(() => import('../modules/Orders/pages/OrderList/OrderList'));
 
 const AdminRoutes = {
   path: '/admin',

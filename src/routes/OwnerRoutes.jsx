@@ -3,7 +3,7 @@ import OwnerLayout from '../layouts/OwnerLayout';
 
 const DashboardHome = lazy(() => import('../modules/Dashboard/pages/DashboardHome'));
 const ShopsList = lazy(() => import('../modules/Products/pages/ShopsList/ShopsList'));
-const OrderList = lazy(() => import('../modules/Orders/pages/OrderList'));
+const OrderList = lazy(() => import('../modules/Orders/pages/OrderList/OrderList'));
 
 const OwnerRoutes = {
   path: '/owner',

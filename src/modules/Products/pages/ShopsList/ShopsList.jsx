@@ -112,7 +112,6 @@ const ShopsList = () => {
     { value: 'most_favorite', label: 'Most Popular', icon: Flame }
   ];
 
-  // Helper function to check if shop is open
   const isShopOpen = (openTime, closeTime) => {
     const now = new Date();
     const currentTime = now.getHours() * 60 + now.getMinutes();

@@ -4,7 +4,8 @@ import UserLayout from '../layouts/UserLayout';
 const Home = lazy(() => import('../pages/Home/Home'));
 const ShopsList = lazy(() => import('../modules/Products/pages/ShopsList/ShopsList'));
 const ShopsDetail = lazy(() => import('../modules/Products/pages/ShopsDetail/ShopsDetail'));
-const OrderList = lazy(() => import('../modules/Orders/pages/OrderList'));
+const OrderList = lazy(() => import('../modules/Orders/pages/OrderList/OrderList'));
+const OrderDetail = lazy(() => import('../modules/Orders/pages/OrderDetail/OrderDetail'));
 
 const UserRoutes = {
     path: '/user',
@@ -25,6 +26,10 @@ const UserRoutes = {
         {
             path: 'orders',
             element: <OrderList />,
+        },
+                {
+            path: 'orders/:id',
+            element: <OrderDetail />,
         },
     ],
 };

@@ -1,0 +1,86 @@
+.booking-modal .availability-info {
+    margin-top: 10px;
+}
+
+.booking-modal .info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.booking-modal .info-row:last-child {
+    border-bottom: none;
+}
+
+.booking-modal .info-row span {
+    color: #666;
+    font-size: 14px;
+}
+
+.booking-modal .info-row strong {
+    color: #333;
+    font-size: 14px;
+}
+
+.booking-modal .suggested-times {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #d9d9d9;
+}
+
+.booking-modal .suggested-times p {
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 13px;
+}
+
+.booking-modal .suggested-times button {
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+.booking-modal .customer-info-section {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.booking-modal .customer-info-section h4 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.booking-modal .form-item {
+    margin-bottom: 16px;
+}
+
+.booking-modal .form-item:last-child {
+    margin-bottom: 0;
+}
+
+.booking-modal .form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+    font-size: 14px;
+}
+
+.booking-modal .form-label .required-mark {
+    color: #ff4d4f;
+    margin-left: 4px;
+}
+
+.booking-modal .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f0;
+}
