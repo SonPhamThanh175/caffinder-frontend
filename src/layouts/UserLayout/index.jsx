@@ -111,6 +111,7 @@ const UserLayout = () => {
         // { path: '/user/search', label: 'Find Shops', icon: Search },
         { path: '/user/orders', label: 'My Orders', icon: ShoppingBag },
         { path: '/user/favorites', label: 'Favorites', icon: Heart },
+        { path: '/user/reviews', label: 'Reviews', icon: Heart },
     ];
 
     const isActive = (path) => location.pathname === path;

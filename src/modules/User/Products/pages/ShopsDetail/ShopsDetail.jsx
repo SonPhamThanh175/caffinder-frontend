@@ -6,6 +6,7 @@ import './style.css';
 import shopsApi from '../../../../../api/shopsApi';
 import favoriteApi from '../../../../../api/favoriteApi';
 import BookingModal from '../ShopsDetail/components/BookingModal/BookingModal';
+import ReviewSection from './components/ReviewSection/ReviewSection';
 
 const ShopsDetail = () => {
     const { id } = useParams();
@@ -92,11 +93,27 @@ const ShopsDetail = () => {
     };
 
     if (loading) {
-        return <div className="loading">Đang tải...</div>;
+        return (
+            <div className="shops-detail">
+                <div className="loading">
+                    <div className="loading-spinner"></div>
+                    <p>Đang tải thông tin quán...</p>
+                </div>
+            </div>
+        );
     }
 
     if (!shop) {
-        return <div className="error">Không tìm thấy cửa hàng</div>;
+        return (
+            <div className="shops-detail">
+                <div className="error">
+                    <h2>Không tìm thấy cửa hàng</h2>
+                    <button onClick={() => navigate('/user/shops')}>
+                        Quay về danh sách
+                    </button>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -206,6 +223,8 @@ const ShopsDetail = () => {
                     </button>
                 </div>
             </div>
+
+            <ReviewSection shopId={id} />
 
             <BookingModal
                 visible={bookingModalVisible}
