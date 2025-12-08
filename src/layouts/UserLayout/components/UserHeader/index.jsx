@@ -71,7 +71,7 @@ const UserHeader = () => {
 
   const navItems = [
     { path: '/user', label: 'Home', icon: Home },
-    { path: '/user/search', label: 'Find Shops', icon: Search },
+    // { path: '/user/search', label: 'Find Shops', icon: Search },
     { path: '/user/orders', label: 'My Orders', icon: ShoppingBag },
     { path: '/user/favorites', label: 'Favorites', icon: Heart }
   ];

@@ -135,13 +135,13 @@ const Home = () => {
                   className="location-input"
                 />
               </div>
-              <button 
+              {/* <button 
                 className="search-btn"
                 onClick={() => navigate('/user/search')}
               >
                 <Search size={20} />
                 <span>Find Shops</span>
-              </button>
+              </button> */}
             </div>
 
             <div className="hero-stats">

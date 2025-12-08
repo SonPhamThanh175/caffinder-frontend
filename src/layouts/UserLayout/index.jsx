@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import {
     Home,
     Search,
     ShoppingBag,
     User,
     Heart,
-    MapPin,
-    ChevronDown,
     Menu,
     X,
     Bell,
@@ -17,25 +16,68 @@ import {
     Gift,
     ShoppingBasket,
 } from 'lucide-react';
-import './style.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { hideLocationModal, updateLocation } from '../../store/slices/userSlice';
+import LocationSelector from '../../components/LocationSelector/LocationSelector';
 import LocationPermissionModal from '../../components/LocationPermissionModal/LocationPermissionModal';
 import ScrollToTop from '../../components/ScrollToTop/ScrollToTop';
+import { hideLocationModal, updateLocation } from '../../store/slices/userSlice';
+import './style.css';
 
 const UserLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const dispatch = useDispatch();
+
     const [showMobileMenu, setShowMobileMenu] = useState(false);
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
-    const dispatch = useDispatch();
+
     const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const currentLocation = useSelector((state) => state.user.current.location);
+    const showLocationModal = useSelector((state) => state.user.settings.showLocationModal);
 
     const handleLogout = () => {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('user');
+        localStorage.removeItem('userLocation');
         navigate('/auth/login');
+    };
+
+    const handleLocationChange = (newLocation) => {
+        dispatch(updateLocation(newLocation));
+        console.log('Location updated:', newLocation);
+    };
+
+    const handleAllowLocation = async () => {
+        try {
+            const position = await new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject, {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0,
+                });
+            });
+
+            const location = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                name: 'Vị trí hiện tại',
+            };
+
+            dispatch(updateLocation(location));
+            dispatch(hideLocationModal());
+            console.log('Location saved:', location);
+        } catch (error) {
+            console.error('Error getting location:', error);
+            dispatch(hideLocationModal());
+            alert(
+                'Không thể lấy vị trí. Vui lòng kiểm tra quyền truy cập trong cài đặt trình duyệt.',
+            );
+        }
+    };
+
+    const handleDenyLocation = () => {
+        dispatch(hideLocationModal());
+        sessionStorage.setItem('locationPermissionDenied', 'true');
     };
 
     useEffect(() => {
@@ -66,48 +108,13 @@ const UserLayout = () => {
     const navItems = [
         { path: '/user', label: 'Home', icon: Home },
         { path: '/user/shops', label: 'Shops', icon: ShoppingBasket },
-        { path: '/user/search', label: 'Find Shops', icon: Search },
+        // { path: '/user/search', label: 'Find Shops', icon: Search },
         { path: '/user/orders', label: 'My Orders', icon: ShoppingBag },
         { path: '/user/favorites', label: 'Favorites', icon: Heart },
     ];
 
     const isActive = (path) => location.pathname === path;
-    const showLocationModal = useSelector((state) => state.user.settings.showLocationModal);
 
-    const handleAllowLocation = async () => {
-        try {
-            const position = await new Promise((resolve, reject) => {
-                navigator.geolocation.getCurrentPosition(resolve, reject, {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0,
-                });
-            });
-
-            const location = {
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-                name: 'Vị trí hiện tại',
-            };
-
-            dispatch(updateLocation(location));
-            dispatch(hideLocationModal());
-
-            console.log('Location saved:', location);
-        } catch (error) {
-            console.error('Error getting location:', error);
-            dispatch(hideLocationModal());
-
-            alert(
-                'Không thể lấy vị trí. Vui lòng kiểm tra quyền truy cập trong cài đặt trình duyệt.',
-            );
-        }
-    };
-
-    const handleDenyLocation = () => {
-        dispatch(hideLocationModal());
-        sessionStorage.setItem('locationPermissionDenied', 'true');
-    };
     return (
         <div className='user-layout'>
             {/* Top Navigation Header */}
@@ -137,20 +144,11 @@ const UserLayout = () => {
 
                     {/* Header Actions */}
                     <div className='header-actions'>
-                        {/* Location Selector */}
-                        <div className='location-selector'>
-                            <MapPin
-                                size={18}
-                                className='location-icon'
-                            />
-                            <div className='location-info'>
-                                <span className='location-label'>Deliver to</span>
-                                <div className='location-value'>
-                                    <span>Current Location</span>
-                                    <ChevronDown size={14} />
-                                </div>
-                            </div>
-                        </div>
+                        {/* Location Selector - UPDATED */}
+                        <LocationSelector
+                            currentLocation={currentLocation}
+                            onLocationChange={handleLocationChange}
+                        />
 
                         {/* Favorites Button */}
                         <button
@@ -516,11 +514,15 @@ const UserLayout = () => {
                     </div>
                 </div>
             </footer>
+
+            {/* Location Permission Modal */}
             <LocationPermissionModal
                 isOpen={showLocationModal}
                 onAllow={handleAllowLocation}
                 onDeny={handleDenyLocation}
             />
+
+            {/* Scroll to Top */}
             <ScrollToTop />
         </div>
     );
