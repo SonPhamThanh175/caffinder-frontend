@@ -3,9 +3,10 @@ import AdminLayout from '../layouts/AdminLayout';
 
 // Lazy load components
 const DashboardHome = lazy(() => import('../modules/Admin/Dashboard/pages/DashboardHome'));
-const UserList = lazy(() => import('../modules/Admin/Users/pages/UserList'));
-const UserDetail = lazy(() => import('../modules/Admin/Users/pages/UserDetail'));
-const ShopsList = lazy(() => import('../modules/User/Products/pages/ShopsList/ShopsList'));
+const UserList = lazy(() => import('../modules/Admin/Users/pages/UserList/UserList'));
+const UserDetail = lazy(() => import('../modules/Admin/Users/pages/UserDetail/UserDetail'));
+const ShopsManagement = lazy(() => import('../modules/Admin/Shops/ShopsManagement'));
+const ShopDetail = lazy(() => import('../modules/Admin/Shops/ShopDetail/ShopDetail'));
 const OrderList = lazy(() => import('../modules/User/Orders/pages/OrderList/OrderList'));
 
 const AdminRoutes = {
@@ -30,8 +31,17 @@ const AdminRoutes = {
       ]
     },
     {
-      path: 'products',
-      element: <ShopsList />
+      path: 'shops',
+      children: [
+        {
+          index: true,
+          element: <ShopsManagement />
+        },
+        {
+          path: ':shopId',
+          element: <ShopDetail />
+        }
+      ]
     },
     {
       path: 'orders',

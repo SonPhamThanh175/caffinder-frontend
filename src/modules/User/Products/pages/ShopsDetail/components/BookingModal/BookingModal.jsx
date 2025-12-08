@@ -61,7 +61,7 @@ const BookingModal = ({ visible, onCancel, shop }) => {
             }
         } catch (error) {
             console.error('Error checking availability:', error);
-            message.error('Có lỗi khi kiểm tra chỗ trống');
+            message.error(error);
         } finally {
             setChecking(false);
         }
