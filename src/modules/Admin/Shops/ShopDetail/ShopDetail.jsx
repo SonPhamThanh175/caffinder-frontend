@@ -27,7 +27,7 @@ import {
     Percent,
     Info,
 } from 'lucide-react';
-import shopAdminApi from '../../../../api/shopAdmin';
+import shopAdminApi from '../../../../api/shopAdminApi';
 import './style.css';
 
 const { confirm } = Modal;

@@ -19,7 +19,7 @@ import {
     Clock,
     X,
 } from 'lucide-react';
-import userAdminApi from '../../../../../api/userAdmin';
+import userAdminApi from '../../../../../api/userAdminApi';
 import './style.css';
 
 const { confirm } = Modal;
