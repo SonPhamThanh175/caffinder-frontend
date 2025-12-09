@@ -1,95 +1,156 @@
-import React, { useState } from 'react';
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Package, 
-  ShoppingCart, 
-  Menu, 
-  X, 
-  LogOut 
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import OwnerSidebar from './components/OwnerSidebar/OwnerSidebar';
+import OwnerHeader from './components/OwnerHeader/OwnerHeader';
+import DashboardContent from './pages/DashboardContent/DashboardContent';
+import ShopManagement from './pages/ShopManagement/ShopManagement';
+import BookingsManagement from './pages/BookingsManagement/BookingsManagement';
+import ReviewsManagement from './pages/ReviewsManagement/ReviewsManagement';
+import SettingsPage from './pages/SettingsPage/SettingsPage';
+import CreateShopModal from './components/CreateShopModal/CreateShopModal';
+import ownerServiceApi from '../../api/ownerServiceApi';
+import './style.css';
 
 const OwnerLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const navigate = useNavigate();
-  const location = useLocation();
-  const user = JSON.parse(localStorage.getItem('user'));
+  const [currentPage, setCurrentPage] = useState('dashboard');
+  const [shops, setShops] = useState([]);
+  const [selectedShop, setSelectedShop] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const { user } = useSelector((state) => state.user.current);
+  
+  useEffect(() => {
+    loadShops();
+  }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
-    navigate('/auth/login');
+  const loadShops = async () => {
+    try {
+      setLoading(true);
+      const data = await ownerServiceApi.getShopByOwnerId();
+      console.log("Danh sách shops:", data);
+      setShops(data);
+      
+      if (data && data.length > 0) {
+        setSelectedShop(data[0]);
+      }
+    } catch (error) {
+      console.error('Error loading shops:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const menuItems = [
-    { path: '/owner/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { path: '/owner/products', icon: Package, label: 'Products' },
-    { path: '/owner/orders', icon: ShoppingCart, label: 'Orders' }
-  ];
+  const loadShopDetail = async (shopId) => {
+    try {
+      const response = await ownerServiceApi.getShopById(shopId);
+      console.log("Chi tiết shop:", response);
+      return response.shop;
+    } catch (error) {
+      console.error('Error loading shop detail:', error);
+      return null;
+    }
+  };
 
-  const isActive = (path) => location.pathname.startsWith(path);
+  const handleShopChange = async (shopId) => {
+    const shop = shops.find(s => s.id === shopId);
+    if (shop) {
+      setSelectedShop(shop);
+    }
+  };
+
+  const handleOpenCreateModal = () => {
+    setShowCreateModal(true);
+  };
+
+  const handleCreateSuccess = () => {
+    loadShops();
+  };
+
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <div className="owner-loading">
+          <div className="coffee-spinner">
+            <div className="coffee-cup">☕</div>
+            <p>Đang tải dữ liệu...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (!shops || shops.length === 0) {
+      return (
+        <div className="no-shops">
+          <div className="no-shops-content">
+            <div className="no-shops-icon">🏪</div>
+            <h2>Chưa có quán nào</h2>
+            <p>Bạn chưa có quán cà phê nào. Hãy tạo quán đầu tiên của bạn!</p>
+            <button 
+              className="create-shop-btn"
+              onClick={handleOpenCreateModal}
+            >
+              Tạo quán mới
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    switch(currentPage) {
+      case 'dashboard':
+        return <DashboardContent shopData={selectedShop} />;
+      case 'shop':
+        return (
+          <ShopManagement 
+            shopData={selectedShop} 
+            onUpdate={loadShops}
+            loadShopDetail={loadShopDetail}
+          />
+        );
+      case 'bookings':
+        return <BookingsManagement shopId={selectedShop?.id} />;
+      case 'reviews':
+        return <ReviewsManagement shopId={selectedShop?.id} />;
+      case 'settings':
+        return <SettingsPage user={user} />;
+      default:
+        return <DashboardContent shopData={selectedShop} />;
+    }
+  };
 
   return (
-    <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-blue-900 text-white transition-all duration-300`}>
-        <div className="flex items-center justify-between p-4 border-b border-blue-800">
-          {sidebarOpen && <h1 className="text-xl font-bold">Owner Panel</h1>}
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-blue-800 rounded">
-            {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+    <div className="owner-layout">
+      <OwnerSidebar 
+        isOpen={sidebarOpen}
+        currentPage={currentPage}
+        setCurrentPage={setCurrentPage}
+        shops={shops}
+        selectedShop={selectedShop}
+        onShopChange={handleShopChange}
+      />
+      
+      <main className="owner-main">
+        <OwnerHeader 
+          currentPage={currentPage}
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+          selectedShop={selectedShop}
+          shops={shops}
+          onShopChange={handleShopChange}
+          onCreateShop={handleOpenCreateModal}
+        />
+        
+        <div className="owner-content">
+          {renderContent()}
         </div>
+      </main>
 
-        <nav className="mt-4">
-          {menuItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center px-4 py-3 hover:bg-blue-800 transition-colors ${
-                isActive(item.path) ? 'bg-blue-800 border-l-4 border-blue-400' : ''
-              }`}
-            >
-              <item.icon size={20} />
-              {sidebarOpen && <span className="ml-3">{item.label}</span>}
-            </Link>
-          ))}
-        </nav>
-      </aside>
-
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="bg-white shadow-sm z-10">
-          <div className="flex items-center justify-between px-6 py-4">
-            <h2 className="text-2xl font-semibold text-gray-800">Owner Dashboard</h2>
-            
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
-                  {user?.name?.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <p className="text-sm font-medium">{user?.name}</p>
-                  <p className="text-xs text-gray-500">{user?.role}</p>
-                </div>
-              </div>
-              
-              <button
-                onClick={handleLogout}
-                className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-              >
-                <LogOut size={18} />
-                <span>Logout</span>
-              </button>
-            </div>
-          </div>
-        </header>
-
-        {/* Page content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
-          <Outlet />
-        </main>
-      </div>
+      <CreateShopModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSuccess={handleCreateSuccess}
+      />
     </div>
   );
 };

@@ -1,95 +1,123 @@
-import React, { useState } from 'react';
-import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
-  Package, 
-  ShoppingCart, 
+  Store,
+  Star,
   Menu, 
-  X, 
-  LogOut,
-  ChevronDown 
+  X
 } from 'lucide-react';
+import AdminHeader from './components/AdminHeader/AdminHeader';
+import './style.css';
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const navigate = useNavigate();
+  const [showOverlay, setShowOverlay] = useState(false);
   const location = useLocation();
-  const user = JSON.parse(localStorage.getItem('user'));
 
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('user');
-    navigate('/auth/login');
+  useEffect(() => {
+    if (window.innerWidth <= 768) {
+      setSidebarOpen(false);
+      setShowOverlay(false);
+    }
+  }, [location]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setShowOverlay(sidebarOpen);
+      } else {
+        setShowOverlay(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [sidebarOpen]);
+
+  const toggleSidebar = () => {
+    const newState = !sidebarOpen;
+    setSidebarOpen(newState);
+    
+    if (window.innerWidth <= 768) {
+      setShowOverlay(newState);
+    }
   };
 
   const menuItems = [
-    { path: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { path: '/admin/users', icon: Users, label: 'Users' },
-    { path: '/admin/products', icon: Package, label: 'Products' },
-    { path: '/admin/orders', icon: ShoppingCart, label: 'Orders' }
+    { 
+      path: '/admin/dashboard', 
+      icon: LayoutDashboard, 
+      label: 'Dashboard' 
+    },
+    { 
+      path: '/admin/shops', 
+      icon: Store, 
+      label: 'Shops' 
+    },
+    { 
+      path: '/admin/users', 
+      icon: Users, 
+      label: 'Users' 
+    },
+    { 
+      path: '/admin/reviews', 
+      icon: Star, 
+      label: 'Reviews' 
+    }
   ];
 
-  const isActive = (path) => location.pathname.startsWith(path);
+  const isActive = (path) => {
+    return location.pathname === path || location.pathname.startsWith(path + '/');
+  };
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-gray-900 text-white transition-all duration-300`}>
-        <div className="flex items-center justify-between p-4 border-b border-gray-700">
-          {sidebarOpen && <h1 className="text-xl font-bold">Admin Panel</h1>}
-          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 hover:bg-gray-800 rounded">
+    <div className="admin-layout">
+      {showOverlay && (
+        <div 
+          className="sidebar-overlay show"
+          onClick={() => {
+            setSidebarOpen(false);
+            setShowOverlay(false);
+          }}
+        />
+      )}
+
+      <aside className={`admin-sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+        <div className="sidebar-header">
+          {sidebarOpen && (
+            <h1 className="sidebar-title">Admin Panel</h1>
+          )}
+          <button 
+            className="sidebar-toggle"
+            onClick={toggleSidebar}
+          >
             {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
 
-        <nav className="mt-4">
-          {menuItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center px-4 py-3 hover:bg-gray-800 transition-colors ${
-                isActive(item.path) ? 'bg-gray-800 border-l-4 border-blue-500' : ''
-              }`}
-            >
-              <item.icon size={20} />
-              {sidebarOpen && <span className="ml-3">{item.label}</span>}
-            </Link>
-          ))}
+        <nav className="sidebar-nav">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
+              >
+                <Icon size={20} />
+                <span className="nav-item-label">{item.label}</span>
+              </Link>
+            );
+          })}
         </nav>
       </aside>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Header */}
-        <header className="bg-white shadow-sm z-10">
-          <div className="flex items-center justify-between px-6 py-4">
-            <h2 className="text-2xl font-semibold text-gray-800">Admin Dashboard</h2>
-            
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
-                  {user?.name?.charAt(0).toUpperCase()}
-                </div>
-                <div>
-                  <p className="text-sm font-medium">{user?.name}</p>
-                  <p className="text-xs text-gray-500">{user?.role}</p>
-                </div>
-              </div>
-              
-              <button
-                onClick={handleLogout}
-                className="flex items-center space-x-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-              >
-                <LogOut size={18} />
-                <span>Logout</span>
-              </button>
-            </div>
-          </div>
-        </header>
+      <div className="admin-main">
+        <AdminHeader />
 
-        {/* Page content */}
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-6">
+        <main className="admin-content">
           <Outlet />
         </main>
       </div>

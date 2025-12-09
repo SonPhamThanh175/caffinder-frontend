@@ -13,12 +13,15 @@ const LocationSelector = ({ currentLocation, onLocationChange }) => {
     { id: 2, name: 'Quận 3, TP.HCM', coords: { latitude: 10.7866, longitude: 106.6890 } },
     { id: 3, name: 'Quận Bình Thạnh, TP.HCM', coords: { latitude: 10.8142, longitude: 106.7068 } },
     { id: 4, name: 'Quận Phú Nhuận, TP.HCM', coords: { latitude: 10.7993, longitude: 106.6810 } },
+    { id: 5, name: 'Quận 7, TP.HCM', coords: { latitude: 10.7333, longitude: 106.7200 } },
+    { id: 6, name: 'Quận 10, TP.HCM', coords: { latitude: 10.7728, longitude: 106.6685 } },
   ];
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setShowDropdown(false);
+        setSearchQuery('');
       }
     };
 
@@ -45,9 +48,20 @@ const LocationSelector = ({ currentLocation, onLocationChange }) => {
 
       onLocationChange(location);
       setShowDropdown(false);
+      setSearchQuery('');
     } catch (error) {
       console.error('Error getting location:', error);
-      alert('Không thể lấy vị trí hiện tại. Vui lòng kiểm tra quyền truy cập.');
+      let errorMessage = 'Không thể lấy vị trí hiện tại. ';
+      
+      if (error.code === 1) {
+        errorMessage += 'Vui lòng cho phép truy cập vị trí trong cài đặt trình duyệt.';
+      } else if (error.code === 2) {
+        errorMessage += 'Không thể xác định vị trí. Vui lòng thử lại.';
+      } else if (error.code === 3) {
+        errorMessage += 'Yêu cầu quá thời gian. Vui lòng thử lại.';
+      }
+      
+      alert(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -67,6 +81,7 @@ const LocationSelector = ({ currentLocation, onLocationChange }) => {
   );
 
   const displayLocation = currentLocation?.name || 'Chọn vị trí';
+  const isCurrentLocation = displayLocation === 'Vị trí hiện tại';
 
   return (
     <div className="location-selector-wrapper" ref={dropdownRef}>
@@ -74,12 +89,12 @@ const LocationSelector = ({ currentLocation, onLocationChange }) => {
         className="location-selector-trigger"
         onClick={() => setShowDropdown(!showDropdown)}
       >
-        <MapPin size={18} className="location-selector-icon" />
+        <MapPin size={18} className={`location-selector-icon ${isCurrentLocation ? 'active' : ''}`} />
         <div className="location-selector-text">
-          <span className="location-selector-label">Giao đến</span>
+          <span className="location-selector-label">Cập nhật vị trí</span>
           <div className="location-selector-value">
             <span className="location-selector-name">{displayLocation}</span>
-            <ChevronDown size={14} />
+            <ChevronDown size={14} className={showDropdown ? 'rotated' : ''} />
           </div>
         </div>
       </button>
@@ -90,7 +105,10 @@ const LocationSelector = ({ currentLocation, onLocationChange }) => {
             <h4>Chọn vị trí giao hàng</h4>
             <button 
               className="location-dropdown-close"
-              onClick={() => setShowDropdown(false)}
+              onClick={() => {
+                setShowDropdown(false);
+                setSearchQuery('');
+              }}
             >
               <X size={18} />
             </button>
@@ -105,6 +123,14 @@ const LocationSelector = ({ currentLocation, onLocationChange }) => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+            {searchQuery && (
+              <button
+                className="location-search-clear"
+                onClick={() => setSearchQuery('')}
+              >
+                <X size={16} />
+              </button>
+            )}
           </div>
 
           {/* Current Location Button */}
@@ -113,8 +139,10 @@ const LocationSelector = ({ currentLocation, onLocationChange }) => {
             onClick={handleGetCurrentLocation}
             disabled={isLoading}
           >
-            <Navigation size={18} />
-            <div>
+            <div className={`location-current-icon ${isLoading ? 'loading' : ''}`}>
+              <Navigation size={18} />
+            </div>
+            <div className="location-current-content">
               <div className="location-current-title">
                 {isLoading ? 'Đang lấy vị trí...' : 'Sử dụng vị trí hiện tại'}
               </div>
@@ -124,25 +152,35 @@ const LocationSelector = ({ currentLocation, onLocationChange }) => {
             </div>
           </button>
 
-          <div className="location-dropdown-divider"></div>
+          <div className="location-dropdown-divider">
+            <span>Hoặc chọn vị trí</span>
+          </div>
 
           {/* Suggested Locations */}
           <div className="location-list">
             <div className="location-list-title">Địa điểm gợi ý</div>
             {filteredLocations.length > 0 ? (
-              filteredLocations.map(location => (
-                <button
-                  key={location.id}
-                  className="location-item"
-                  onClick={() => handleSelectLocation(location)}
-                >
-                  <MapPin size={16} />
-                  <span>{location.name}</span>
-                </button>
-              ))
+              filteredLocations.map(location => {
+                const isSelected = currentLocation?.name === location.name;
+                return (
+                  <button
+                    key={location.id}
+                    className={`location-item ${isSelected ? 'selected' : ''}`}
+                    onClick={() => handleSelectLocation(location)}
+                  >
+                    <MapPin size={16} />
+                    <span>{location.name}</span>
+                    {isSelected && (
+                      <span className="location-item-check">✓</span>
+                    )}
+                  </button>
+                );
+              })
             ) : (
               <div className="location-empty">
-                Không tìm thấy địa điểm phù hợp
+                <MapPin size={32} />
+                <p>Không tìm thấy địa điểm phù hợp</p>
+                <small>Thử tìm kiếm với từ khóa khác</small>
               </div>
             )}
           </div>

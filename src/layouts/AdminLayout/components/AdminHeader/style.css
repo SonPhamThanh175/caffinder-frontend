@@ -1,0 +1,441 @@
+/* ========================================
+   ADMIN HEADER STYLES - COFFEE THEME
+   ======================================== */
+
+.admin-header {
+  background: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(139, 90, 43, 0.08);
+  z-index: 50;
+  min-height: 80px;
+  border-bottom: 2px solid rgba(139, 90, 43, 0.1);
+  position: sticky;
+  top: 0;
+}
+
+.admin-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+  gap: 24px;
+}
+
+/* Header Title */
+.admin-header-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #3E2723;
+  margin: 0;
+  background: linear-gradient(135deg, #8B5A2B 0%, #6B4423 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  letter-spacing: -0.5px;
+}
+
+.admin-header-title::before {
+  content: '📊';
+  font-size: 32px;
+  -webkit-text-fill-color: initial;
+  filter: drop-shadow(0 2px 4px rgba(139, 90, 43, 0.3));
+}
+
+/* Header Actions */
+.admin-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Search Bar (Optional) */
+.admin-search-bar {
+  position: relative;
+  width: 300px;
+  display: flex;
+  align-items: center;
+}
+
+.admin-search-bar .search-icon {
+  position: absolute;
+  left: 14px;
+  color: #9E9E9E;
+  pointer-events: none;
+}
+
+.admin-search-bar .search-input {
+  width: 100%;
+  padding: 10px 16px 10px 44px;
+  border: 2px solid #E8DDD1;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #424242;
+  background: #FAF8F5;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.admin-search-bar .search-input:focus {
+  border-color: #8B5A2B;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 4px rgba(139, 90, 43, 0.1);
+}
+
+.admin-search-bar .search-input::placeholder {
+  color: #BDBDBD;
+}
+
+/* Icon Buttons */
+.admin-icon-btn {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FAF8F5;
+  border: 2px solid #E8DDD1;
+  border-radius: 12px;
+  cursor: pointer;
+  color: #6B4423;
+  transition: all 0.3s ease;
+}
+
+.admin-icon-btn:hover {
+  background: #F5F1ED;
+  border-color: #8B5A2B;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.2);
+}
+
+.admin-icon-btn:active {
+  transform: translateY(0);
+}
+
+/* Notification Badge */
+.notification-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 10px;
+  height: 10px;
+  background: linear-gradient(135deg, #EF4444, #DC2626);
+  border-radius: 50%;
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 2px 4px rgba(239, 68, 68, 0.4);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* User Profile Section */
+.admin-user-menu-wrapper {
+  position: relative;
+}
+
+.admin-user-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px 8px 8px;
+  background: #FAF8F5;
+  border: 2px solid #E8DDD1;
+  border-radius: 14px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.admin-user-profile:hover {
+  background: #F5F1ED;
+  border-color: #8B5A2B;
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.15);
+}
+
+.admin-user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #8B5A2B, #6B4423);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(139, 90, 43, 0.3);
+  border: 3px solid #FFFFFF;
+}
+
+.admin-user-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.admin-user-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: #3E2723;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.2px;
+}
+
+.admin-user-role {
+  font-size: 12px;
+  color: #8B5A2B;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.user-menu-arrow {
+  transition: transform 0.3s ease;
+  color: #9E9E9E;
+  flex-shrink: 0;
+}
+
+.admin-user-profile:hover .user-menu-arrow {
+  transform: rotate(180deg);
+  color: #8B5A2B;
+}
+
+/* User Dropdown Menu */
+.user-menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: transparent;
+}
+
+.admin-user-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 280px;
+  background: #FFFFFF;
+  border: 2px solid #E8DDD1;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(139, 90, 43, 0.15);
+  padding: 12px;
+  z-index: 101;
+  animation: dropdownSlide 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes dropdownSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-header {
+  padding: 16px;
+  border-bottom: 2px solid #F5F1ED;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #FAF8F5, #F5F1ED);
+  border-radius: 8px;
+}
+
+.dropdown-user-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #3E2723;
+  margin-bottom: 4px;
+}
+
+.dropdown-user-email {
+  font-size: 13px;
+  color: #8B5A2B;
+  font-weight: 500;
+}
+
+.dropdown-section {
+  padding: 4px 0;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #3E2723;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.dropdown-item:hover {
+  background: linear-gradient(135deg, #FAF8F5, #F5F1ED);
+  color: #8B5A2B;
+  transform: translateX(4px);
+}
+
+.dropdown-item svg {
+  flex-shrink: 0;
+  filter: drop-shadow(0 1px 2px rgba(139, 90, 43, 0.2));
+}
+
+.dropdown-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #E8DDD1, transparent);
+  margin: 8px 0;
+}
+
+.dropdown-item.danger {
+  color: #D32F2F;
+}
+
+.dropdown-item.danger:hover {
+  background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+  color: #C62828;
+}
+
+/* Logout Button */
+.admin-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #EF4444, #DC2626);
+  color: #FFFFFF;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.admin-logout-btn:hover {
+  background: linear-gradient(135deg, #DC2626, #B91C1C);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+}
+
+.admin-logout-btn:active {
+  transform: translateY(0);
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+@media (max-width: 1024px) {
+  .admin-header-content {
+    padding: 16px 24px;
+  }
+  
+  .admin-search-bar {
+    width: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-header-content {
+    padding: 16px 20px;
+  }
+  
+  .admin-header-title {
+    font-size: 22px;
+  }
+  
+  .admin-header-title::before {
+    font-size: 26px;
+  }
+  
+  .admin-search-bar {
+    display: none;
+  }
+  
+  .admin-user-info {
+    display: none;
+  }
+  
+  .admin-user-profile {
+    padding: 8px;
+  }
+  
+  .admin-logout-btn span {
+    display: none;
+  }
+  
+  .admin-logout-btn {
+    padding: 12px;
+    width: 48px;
+    height: 48px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-header-content {
+    padding: 12px 16px;
+  }
+  
+  .admin-header-title {
+    font-size: 18px;
+  }
+  
+  .admin-icon-btn {
+    width: 44px;
+    height: 44px;
+  }
+  
+  .admin-user-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+  }
+}
+
+/* ========================================
+   DARK MODE TOGGLE ANIMATION
+   ======================================== */
+.admin-icon-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.admin-icon-btn:hover svg {
+  transform: rotate(20deg) scale(1.1);
+}
+
+/* Notification Icon Animation */
+.admin-icon-btn:has(.notification-badge) svg {
+  animation: shake 3s ease-in-out infinite;
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: rotate(-5deg);
+  }
+  20%, 40%, 60%, 80% {
+    transform: rotate(5deg);
+  }
+}

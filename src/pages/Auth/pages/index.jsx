@@ -214,7 +214,7 @@ const handleLoginSubmit = async (values, { setSubmitting }) => {
                             username: '',
                             password: '',
                         }}
-                        validationSchema={loginSchema}
+                        // validationSchema={loginSchema}
                         onSubmit={handleLoginSubmit}
                     >
                         {({ isSubmitting }) => (
