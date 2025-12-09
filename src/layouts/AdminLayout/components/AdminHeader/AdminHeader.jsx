@@ -12,16 +12,20 @@ import {
   Gift
 } from 'lucide-react';
 import './style.css';
+import { logout } from '../../../../store/slices/userSlice';
+import { useDispatch } from 'react-redux';
 
 const AdminHeader = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
+  const dispatch = useDispatch();
   
   const user = JSON.parse(localStorage.getItem('user') || '{}');
 
   const handleLogout = () => {
+    dispatch(logout());
     localStorage.removeItem('accessToken');
     localStorage.removeItem('user');
     navigate('/auth/login');
