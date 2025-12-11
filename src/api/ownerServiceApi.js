@@ -40,7 +40,48 @@ const ownerServiceApi = {
 
     async replyReview(id, reply) {
         const url = `/api/reviews/${id}/reply`;
-        return axiosClient.patch(url,{ownerReply: reply});
+        return axiosClient.patch(url, { ownerReply: reply });
+    },
+
+    // ============ MENU APIs ============
+    async getMenus(shopId) {
+        const url = `/api/menu/shop/${shopId}`;
+        return axiosClient.get(url);
+    },
+
+    createMenu: async (shopId, payload) => {
+        const url = `/api/menu/shop/${shopId}`;
+        return axiosClient.post(url, payload);
+    },
+
+    updateMenu: async (menuId, payload) => {
+        const url = `/api/menu/${menuId}`;
+        return axiosClient.patch(url, payload);
+    },
+
+    deleteMenu: async (menuId) => {
+        const url = `/api/menu/${menuId}`;
+        return axiosClient.delete(url);
+    },
+
+    getMenuItems: async (menuId) => {
+        const url = `/api/menu/${menuId}/items`;
+        return axiosClient.get(url);
+    },
+
+    createMenuItem: async (menuId, payload) => {
+        const url = `/api/menu/${menuId}/items`;
+        return axiosClient.post(url, payload);
+    },
+
+    updateMenuItem: async (itemId, payload) => {
+        const url = `/api/menu/item/${itemId}`;
+        return axiosClient.patch(url, payload);
+    },
+
+    deleteMenuItem: async (itemId) => {
+        const url = `/api/menu/item/${itemId}`;
+        return axiosClient.delete(url);
     },
 };
 
