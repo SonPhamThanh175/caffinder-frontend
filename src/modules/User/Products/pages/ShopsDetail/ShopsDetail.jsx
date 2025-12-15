@@ -7,6 +7,7 @@ import shopsApi from '../../../../../api/shopsApi';
 import favoriteApi from '../../../../../api/favoriteApi';
 import BookingModal from '../ShopsDetail/components/BookingModal/BookingModal';
 import ReviewSection from './components/ReviewSection/ReviewSection';
+import MenuSection from './components/MenuSection/MenuSection';
 
 const ShopsDetail = () => {
     const { id } = useParams();
@@ -223,6 +224,8 @@ const ShopsDetail = () => {
                     </button>
                 </div>
             </div>
+
+            <MenuSection shopId={id} />
 
             <ReviewSection shopId={id} />
 
