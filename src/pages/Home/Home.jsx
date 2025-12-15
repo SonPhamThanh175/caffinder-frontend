@@ -221,7 +221,7 @@ const Home = () => {
           </div>
           <button 
             className="view-all-btn"
-            onClick={() => navigate('/user/search')}
+            onClick={() => navigate('/user/shops')}
           >
             View All
             <ArrowRight size={18} />
