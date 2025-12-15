@@ -24,7 +24,7 @@ const Reviews = () => {
             setReviews(response.data || []);
         } catch (error) {
             console.error('Error fetching my reviews:', error);
-            message.error('Không thể tải danh sách đánh giá');
+            message.error(error || 'Không thể tải danh sách đánh giá');
         } finally {
             setLoading(false);
         }

@@ -24,7 +24,7 @@ const ReviewSection = ({ shopId }) => {
             setReviews(response.data || []);
         } catch (error) {
             console.error('Error fetching reviews:', error);
-            message.error('Không thể tải đánh giá');
+            message.error(error || 'Không thể tải đánh giá');
         } finally {
             setLoading(false);
         }

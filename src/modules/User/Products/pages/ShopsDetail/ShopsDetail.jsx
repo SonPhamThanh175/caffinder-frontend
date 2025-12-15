@@ -62,7 +62,7 @@ const ShopsDetail = () => {
             }
         } catch (error) {
             console.error('Error toggling favorite:', error);
-            message.error('Có lỗi xảy ra');
+            message.error(error || 'Có lỗi xảy ra');
         } finally {
             setTogglingFav(false);
         }

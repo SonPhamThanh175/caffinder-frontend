@@ -30,7 +30,6 @@ const OwnerLayout = () => {
         try {
             setLoading(true);
             const data = await ownerServiceApi.getShopByOwnerId();
-            console.log('Danh sách shops:', data);
             setShops(data);
 
             if (data && data.length > 0) {

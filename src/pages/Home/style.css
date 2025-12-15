@@ -420,6 +420,7 @@ section {
   box-shadow: 0 2px 8px rgba(211, 47, 47, 0.4);
 }
 
+
 .shop-image-home {
   height: 180px;
   background: linear-gradient(135deg, #F5F1ED 0%, #E8DDD1 100%);
@@ -427,6 +428,14 @@ section {
   align-items: center;
   justify-content: center;
   position: relative;
+  overflow: hidden;
+}
+
+.shop-photo-home {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .shop-emoji-home {
