@@ -25,7 +25,7 @@ const Home = () => {
     {
       id: 1,
       name: 'The Coffee House',
-      image: '☕',
+      image: 'https://file.hstatic.net/1000075078/article/bh-01_a3d2e297bd60454c9a1da42fcd6c7f7f.jpg',
       rating: 4.8,
       reviews: 245,
       distance: 1.2,
@@ -36,7 +36,7 @@ const Home = () => {
     {
       id: 2,
       name: 'Highlands Coffee',
-      image: '🏔️',
+      image: 'https://tour3dao.com/wp-content/uploads/2024/12/highland-nha-trang-4.webp',
       rating: 4.7,
       reviews: 189,
       distance: 2.5,
@@ -47,7 +47,7 @@ const Home = () => {
     {
       id: 3,
       name: 'Phúc Long Coffee & Tea',
-      image: '🍵',
+      image: 'https://winci.com.vn/wp-content/uploads/2024/02/Su-ra-doi-cua-thuong-hieu-Phuc-Long.webp',
       rating: 4.9,
       reviews: 312,
       distance: 0.8,
@@ -58,7 +58,7 @@ const Home = () => {
     {
       id: 4,
       name: 'Starbucks Reserve',
-      image: '⭐',
+      image: 'https://www.cukcuk.vn/wp-content/uploads/2024/09/starbucks-coffee-1.png',
       rating: 4.6,
       reviews: 567,
       distance: 3.2,
@@ -236,7 +236,12 @@ const Home = () => {
               )}
               
               <div className="shop-image-home">
-                <div className="shop-emoji-home">{shop.image}</div>
+                {/* <div className="shop-emoji-home">{shop.image}</div> */}
+                <img 
+                  src={shop.image} 
+                  alt={shop.name} 
+                  className="shop-photo-home"
+                />
               </div>
 
               <div className="shop-info-home">
@@ -314,7 +319,7 @@ const Home = () => {
           <div className="cta-buttons">
             <button 
               className="cta-btn primary"
-              onClick={() => navigate('/user/search')}
+              onClick={() => navigate('/user/shops')}
             >
               <Search size={20} />
               <span>Find Coffee Shops</span>

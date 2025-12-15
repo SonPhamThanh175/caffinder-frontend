@@ -70,7 +70,7 @@ const MenuManagement = ({ shopId }) => {
             message.success('Xóa menu thành công!');
             await loadMenus();
         } catch (error) {
-            message.error('Có lỗi xảy ra!');
+            message.error(error || 'Có lỗi xảy ra!');
         } finally {
             setLoading(false);
         }

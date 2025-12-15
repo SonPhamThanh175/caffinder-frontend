@@ -24,7 +24,7 @@ const FavoritePage = () => {
       setFavorites(response.data || []);
     } catch (error) {
       console.error('Error fetching favorites:', error);
-      message.error('Không thể tải danh sách yêu thích');
+      message.error(error || 'Không thể tải danh sách yêu thích');
     } finally {
       setLoading(false);
     }
@@ -39,7 +39,7 @@ const FavoritePage = () => {
       message.success('Đã xóa khỏi danh sách yêu thích');
     } catch (error) {
       console.error('Error removing favorite:', error);
-      message.error('Không thể xóa khỏi yêu thích');
+      message.error(error);
     } finally {
       setRemovingId(null);
     }

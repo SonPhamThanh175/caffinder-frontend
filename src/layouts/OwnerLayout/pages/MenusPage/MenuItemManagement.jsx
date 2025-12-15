@@ -55,7 +55,7 @@ const MenuItemManagement = ({ shopId }) => {
                 }
             }
         } catch (error) {
-            message.error('Không thể tải danh sách món!');
+            message.error(error || 'Không thể tải danh sách món!');
         } finally {
             setLoading(false);
         }
@@ -88,7 +88,7 @@ const MenuItemManagement = ({ shopId }) => {
             await loadItems();
         } catch (error) {
             console.error('Error saving item:', error);
-            message.error('Có lỗi xảy ra!');
+            message.error(error || 'Có lỗi xảy ra!');
         } finally {
             setLoading(false);
         }
@@ -116,7 +116,7 @@ const MenuItemManagement = ({ shopId }) => {
             await loadItems();
         } catch (error) {
             console.error('Error deleting item:', error);
-            message.error('Có lỗi xảy ra!');
+            message.error(error || 'Có lỗi xảy ra!');
         } finally {
             setLoading(false);
         }

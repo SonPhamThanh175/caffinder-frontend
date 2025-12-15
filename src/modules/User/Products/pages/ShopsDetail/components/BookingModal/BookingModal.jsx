@@ -90,7 +90,7 @@ const BookingModal = ({ visible, onCancel, shop }) => {
             handleClose();
         } catch (error) {
             console.error('Error creating booking:', error);
-            message.error('Có lỗi khi đặt bàn. Vui lòng thử lại.');
+            message.error(error || 'Có lỗi khi đặt bàn. Vui lòng thử lại.');
         } finally {
             setCreating(false);
         }
