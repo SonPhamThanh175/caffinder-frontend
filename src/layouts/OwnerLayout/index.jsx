@@ -15,7 +15,7 @@ import MenusPage from './pages/MenusPage/MenusPage';
 
 const OwnerLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [currentPage, setCurrentPage] = useState('menu');
+    const [currentPage, setCurrentPage] = useState('dashboard');
     const [shops, setShops] = useState([]);
     const [selectedShop, setSelectedShop] = useState(null);
     const [loading, setLoading] = useState(true);
