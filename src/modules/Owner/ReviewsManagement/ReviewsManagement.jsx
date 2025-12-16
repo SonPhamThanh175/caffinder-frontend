@@ -1,32 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Star, MessageSquare, Send, X } from 'lucide-react';
-import ownerServiceApi from '../../../../api/ownerServiceApi';
+import ownerServiceApi from '../../../api/ownerServiceApi';
 import './style.css';
+import { message } from 'antd';
 
 
 const ReviewsManagement = ({ shopId }) => {
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      user: { name: 'Nguyễn Văn A', avatar: null },
-      rating: 5,
-      comment: 'Quán rất đẹp, không gian thoáng mát, món ăn ngon. Sẽ quay lại!',
-      createdAt: '2024-12-05T10:30:00',
-      ownerReply: null
-    },
-    {
-      id: 2,
-      user: { name: 'Trần Thị B', avatar: null },
-      rating: 4,
-      comment: 'Đồ uống ngon, nhân viên thân thiện. Chỉ có điều hơi đông người.',
-      createdAt: '2024-12-04T15:20:00',
-      ownerReply: 'Cảm ơn bạn đã ghé thăm! Chúng mình sẽ cải thiện dịch vụ hơn nữa.'
+  console.log(shopId);
+  
+  const [reviews, setReviews] = useState([]);
+  useEffect(() => {
+    try {
+      const fetchReviews = async () => {
+        const response = await ownerServiceApi.getReviewsByShopId(shopId);
+        setReviews(response.data);
+        setResponse(response);
+      };
+      fetchReviews();
+    } catch (error) {
+      message.error(error || 'Lỗi khi tải đánh giá. Vui lòng thử lại sau.');
     }
-  ]);
+  }, []);
 
   const [replyModal, setReplyModal] = useState({ show: false, reviewId: null });
   const [replyText, setReplyText] = useState('');
   const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState({});
 
   const handleOpenReply = (reviewId, existingReply = '') => {
     setReplyModal({ show: true, reviewId });
@@ -97,33 +96,33 @@ const ReviewsManagement = ({ shopId }) => {
       <div className="reviews-header">
         <div className="header-info">
           <h2>Đánh giá từ khách hàng</h2>
-          <p>{reviews.length} đánh giá</p>
+          <p>{response?.data?.length} đánh giá</p>
         </div>
         <div className="rating-summary">
           <div className="avg-rating">
-            <span className="rating-number">4.8</span>
+            <span className="rating-number">{response?.stats?.avgRating || 0}</span>
             <div className="rating-stars">
-              {renderStars(5)}
-              <span className="rating-count">(156 đánh giá)</span>
+              {renderStars(response?.stats?.avgRating || 0)}
+              <span className="rating-count">({response?.stats?.totalReviews ? response?.stats?.totalReviews : 0} đánh giá)</span>
             </div>
           </div>
         </div>
       </div>
 
       <div className="reviews-list">
-        {reviews.map((review) => (
+        {reviews?.map((review) => (
           <div key={review.id} className="review-card">
             <div className="review-header">
               <div className="reviewer-info">
                 <div className="reviewer-avatar">
                   {review.user.avatar ? (
-                    <img src={review.user.avatar} alt={review.user.name} />
+                    <img src={review.user.avaUrl} alt={review.user.displayName} />
                   ) : (
-                    <span>{review.user.name.charAt(0).toUpperCase()}</span>
+                    <span>{review?.user?.name?.charAt(0).toUpperCase()}</span>
                   )}
                 </div>
                 <div className="reviewer-details">
-                  <h4>{review.user.name}</h4>
+                  <h4>{review.user.displayName}</h4>
                   <div className="review-meta">
                     {renderStars(review.rating)}
                     <span className="review-date">{getTimeAgo(review.createdAt)}</span>

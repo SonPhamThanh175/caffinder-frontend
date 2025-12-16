@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, Calendar, Star, DollarSign, Users, Clock } from 'lucide-react';
-import ownerServiceApi from '../../../../api/ownerServiceApi';
+import ownerServiceApi from '../../../api/ownerServiceApi';
 import './style.css';
 
 

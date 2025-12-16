@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Save } from 'lucide-react';
 import './style.css';
-import userApi from '../../../../api/userApi';
+import userApi from '../../../api/userApi';
 
 const SettingsPage = ({ user }) => {
     console.log(user);

@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import OwnerSidebar from './components/OwnerSidebar/OwnerSidebar';
 import OwnerHeader from './components/OwnerHeader/OwnerHeader';
-import DashboardContent from './pages/DashboardContent/DashboardContent';
-import ShopManagement from './pages/ShopManagement/ShopManagement';
-import BookingsManagement from './pages/BookingsManagement/BookingsManagement';
-import ReviewsManagement from './pages/ReviewsManagement/ReviewsManagement';
-import SettingsPage from './pages/SettingsPage/SettingsPage';
+import DashboardContent from '../../modules/Owner/DashboardContent/DashboardContent';
+import ShopManagement from '../../modules/Owner/ShopManagement/ShopManagement';
+import BookingsManagement from '../../modules/Owner/BookingsManagement/BookingsManagement';
+import ReviewsManagement from '../../modules/Owner/ReviewsManagement/ReviewsManagement';
+import SettingsPage from '../../modules/Owner/SettingsPage/SettingsPage';
 import CreateShopModal from './components/CreateShopModal/CreateShopModal';
 import ownerServiceApi from '../../api/ownerServiceApi';
 import './style.css';
-import MenuManagement from './pages/MenusPage/MenusPage';
-import MenusPage from './pages/MenusPage/MenusPage';
+import MenuManagement from '../../modules/Owner/MenusPage/MenusPage';
+import MenusPage from '../../modules/Owner/MenusPage/MenusPage';
 
 const OwnerLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);

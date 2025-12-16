@@ -43,6 +43,11 @@ const ownerServiceApi = {
         return axiosClient.patch(url, { ownerReply: reply });
     },
 
+    async getReviewsByShopId(shopId) {
+        const url = `/api/reviews/${shopId}`;
+        return axiosClient.get(url);
+    },
+
     // ============ MENU APIs ============
     async getMenus(shopId) {
         const url = `/api/menu/shop/${shopId}`;

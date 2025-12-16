@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, Plus, Edit2, Trash2, Save, X } from 'lucide-react';
-import ownerServiceApi from './../../../../api/ownerServiceApi';
+import ownerServiceApi from '../../../api/ownerServiceApi';
 import { message, Popconfirm } from 'antd';
 
 const MenuManagement = ({ shopId }) => {
