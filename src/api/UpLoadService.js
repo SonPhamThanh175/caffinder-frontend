@@ -37,6 +37,18 @@ class UpLoadService {
 
         return data.publicUrl;
     }
+
+    async testConnection() {
+        try {
+            const { data, error } = await supabase.storage.listBuckets();
+            if (error) throw error;
+            console.log('Available buckets:', data);
+            return true;
+        } catch (err) {
+            console.error('Connection test failed:', err);
+            return false;
+        }
+    }
 }
 
 export default new UpLoadService();

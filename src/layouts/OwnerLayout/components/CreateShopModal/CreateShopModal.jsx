@@ -28,6 +28,12 @@ const CreateShopModal = ({ isOpen, onClose, onSuccess }) => {
     const handleImageUpload = (e) => {
         const files = Array.from(e.target.files);
 
+        // Debug: Kiểm tra files
+        files.forEach((file) => {
+            console.log('File name:', file.name);
+            console.log('File type:', file.type);
+            console.log('File size:', file.size);
+        });
         setImageFiles((prev) => [...prev, ...files]);
 
         const previews = files.map((file) => URL.createObjectURL(file));
@@ -66,6 +72,12 @@ const CreateShopModal = ({ isOpen, onClose, onSuccess }) => {
 
         try {
             setLoading(true);
+
+            const connected = await UpLoadService.testConnection();
+            if (!connected) {
+                alert('Không thể kết nối với Supabase!');
+                return;
+            }
 
             let imageUrls = [];
             if (imageFiles.length > 0) {
