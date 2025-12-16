@@ -72,7 +72,7 @@ const OwnerHeader = ({
         
         <div className="header-title-section">
           <h1 className="page-title">{pageTitles[currentPage]}</h1>
-          <p className="header-greeting">
+          <p className="header-greeting" style={{color:'black'}}>
             <Coffee size={16} />
             {getGreeting()}, {user?.name}
           </p>
@@ -217,14 +217,14 @@ const OwnerHeader = ({
                   </div>
                 </div>
                 <div className="user-dropdown-menu">
-                  <button className="dropdown-item">
+                  {/* <button className="dropdown-item" onClick={() => navigate('/owner/settings')}>
                     <User size={18} />
                     Trang cá nhân
                   </button>
                   <button className="dropdown-item">
                     <Coffee size={18} />
                     Shop của tôi
-                  </button>
+                  </button> */}
                   <button className="dropdown-item logout" onClick={handleLogout}>
                     <LogOut size={18} />
                     Đăng xuất

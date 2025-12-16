@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Save } from 'lucide-react';
 import './style.css';
 import userApi from '../../../api/userApi';
+import { message } from 'antd';
 
 const SettingsPage = ({ user }) => {
     console.log(user);
@@ -23,10 +24,10 @@ const SettingsPage = ({ user }) => {
     try {
       setLoading(true);
       await userApi.updateProfile(formData);
-      alert('Cập nhật thông tin thành công!');
+      message.success('Cập nhật thông tin thành công!');
     } catch (error) {
       console.error(error);
-    //   alert('Có lỗi xảy ra. Vui lòng thử lại!');
+      message.error(error || 'Đã có lỗi xảy ra. Vui lòng thử lại.');
     } finally {
       setLoading(false);
     }

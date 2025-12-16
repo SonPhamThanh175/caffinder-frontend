@@ -1,21 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import OwnerSidebar from './components/OwnerSidebar/OwnerSidebar';
-import OwnerHeader from './components/OwnerHeader/OwnerHeader';
-import DashboardContent from '../../modules/Owner/DashboardContent/DashboardContent';
-import ShopManagement from '../../modules/Owner/ShopManagement/ShopManagement';
+import ownerServiceApi from '../../api/ownerServiceApi';
 import BookingsManagement from '../../modules/Owner/BookingsManagement/BookingsManagement';
+import DashboardContent from '../../modules/Owner/DashboardContent/DashboardContent';
+import MenusPage from '../../modules/Owner/MenusPage/MenusPage';
 import ReviewsManagement from '../../modules/Owner/ReviewsManagement/ReviewsManagement';
 import SettingsPage from '../../modules/Owner/SettingsPage/SettingsPage';
+import ShopManagement from '../../modules/Owner/ShopManagement/ShopManagement';
 import CreateShopModal from './components/CreateShopModal/CreateShopModal';
-import ownerServiceApi from '../../api/ownerServiceApi';
+import OwnerHeader from './components/OwnerHeader/OwnerHeader';
+import OwnerSidebar from './components/OwnerSidebar/OwnerSidebar';
 import './style.css';
-import MenuManagement from '../../modules/Owner/MenusPage/MenusPage';
-import MenusPage from '../../modules/Owner/MenusPage/MenusPage';
 
 const OwnerLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [currentPage, setCurrentPage] = useState('menu');
+    const [currentPage, setCurrentPage] = useState('dashboard');
     const [shops, setShops] = useState([]);
     const [selectedShop, setSelectedShop] = useState(null);
     const [loading, setLoading] = useState(true);
