@@ -6,6 +6,16 @@ const shopAdminApi = {
         return axiosClient.get(url);
     },
 
+    async deleteReview(reviewId) {
+        const url = `api/reviews/${reviewId}`;
+        return axiosClient.delete(url);
+    },
+
+    async getReviewsByShopId(shopId) {
+        const url = `/api/reviews/${shopId}`;
+        return axiosClient.get(url);
+    },
+
     async updateShopStatus(id, status) {
         const url = `/api/shops/${id}/status`;
         return axiosClient.patch(url, { status });
@@ -30,7 +40,7 @@ const shopAdminApi = {
     async getById(id) {
         const url = `/api/shops/${id}`;
         return axiosClient.get(url);
-    }
+    },
 };
 
 export default shopAdminApi;
