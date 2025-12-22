@@ -67,6 +67,10 @@ const OwnerLayout = () => {
         loadShops();
     };
 
+    const handleNavigate = (page) => {
+        setCurrentPage(page);
+    };
+
     const renderContent = () => {
         if (loading) {
             return (
@@ -99,7 +103,12 @@ const OwnerLayout = () => {
 
         switch (currentPage) {
             case 'dashboard':
-                return <DashboardContent shopData={selectedShop} />;
+                return (
+                    <DashboardContent 
+                        shopData={selectedShop} 
+                        onNavigate={handleNavigate}
+                    />
+                );
             case 'shop':
                 return (
                     <ShopManagement
@@ -117,7 +126,12 @@ const OwnerLayout = () => {
             case 'settings':
                 return <SettingsPage user={user} />;
             default:
-                return <DashboardContent shopData={selectedShop} />;
+                return (
+                    <DashboardContent 
+                        shopData={selectedShop} 
+                        onNavigate={handleNavigate}
+                    />
+                );
         }
     };
 

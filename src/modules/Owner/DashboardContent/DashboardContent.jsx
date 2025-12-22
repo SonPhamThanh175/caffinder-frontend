@@ -4,7 +4,7 @@ import ownerServiceApi from '../../../api/ownerServiceApi';
 import './style.css';
 
 
-const DashboardContent = ({ shopData }) => {
+const DashboardContent = ({ shopData, onNavigate }) => {
   const [recentBookings, setRecentBookings] = useState([]);
   const [stats, setStats] = useState({
     totalBookings: 0,
@@ -19,6 +19,7 @@ const DashboardContent = ({ shopData }) => {
     }
   }, [shopData]);
 
+
   const loadDashboardData = async () => {
     try {
       const today = new Date().toISOString().split('T')[0];
@@ -26,17 +27,22 @@ const DashboardContent = ({ shopData }) => {
         date: today,
         status: 'pending'
       });
-      
-      setRecentBookings(bookingsData?.data?.slice(0, 5) || []);
+      setRecentBookings(bookingsData?.bookings?.slice(0, 5) || []);
       
       setStats({
         totalBookings: 156,
-        todayBookings: bookingsData?.data?.length || 0,
+        todayBookings: bookingsData?.bookings?.length || 0,
         avgRating: 4.8,
         revenue: 45000000
       });
     } catch (error) {
       console.error('Error loading dashboard data:', error);
+    }
+  };
+
+  const handleViewAllBookings = () => {
+    if (onNavigate) {
+      onNavigate('bookings');
     }
   };
 
@@ -125,7 +131,9 @@ const DashboardContent = ({ shopData }) => {
               <Calendar size={20} />
               Đặt chỗ gần đây
             </h2>
-            <button className="view-all-btn">Xem tất cả</button>
+            <button className="view-all-btn" onClick={handleViewAllBookings}>
+              Xem tất cả
+            </button>
           </div>
           
           <div className="booking-list">
@@ -136,7 +144,7 @@ const DashboardContent = ({ shopData }) => {
                     {booking.user?.name?.charAt(0).toUpperCase() || '?'}
                   </div>
                   <div className="booking-info">
-                    <p className="customer-name">{booking.user?.name || 'Khách hàng'}</p>
+                    <p className="customer-name">{booking.customerName|| 'Khách hàng'}</p>
                     <p className="booking-time">
                       {new Date(booking.bookingDate).toLocaleDateString('vi-VN')} • 
                       {booking.numberOfGuests} người

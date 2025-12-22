@@ -45,7 +45,7 @@ const ShopsList = () => {
       limit: Number.parseInt(params.limit) || 10,
       longitude: userLocation?.longitude,
       latitude: userLocation?.latitude,
-      radius: Number.parseInt(params.radius) || 5,
+      radius: Number.parseInt(params.radius) || 20,
       sortBy: params.sortBy || undefined,
       search: params.search || ''
     };
