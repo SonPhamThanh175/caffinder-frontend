@@ -1,10 +1,9 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { redirect, useNavigate } from 'react-router-dom';
 import {
     Search,
     MapPin,
     Star,
-    Clock,
     TrendingUp,
     Award,
     Heart,
@@ -17,56 +16,59 @@ import {
     ChevronRight,
 } from 'lucide-react';
 import './style.css';
+import { message } from 'antd';
+import shopsApi from './../../api/shopsApi';
 
 const Home = () => {
     const navigate = useNavigate();
+    const [featuredShops, setFeaturedShops] = useState([]);
 
-    const featuredShops = [
-        {
-            id: 1,
-            name: 'The Coffee House',
-            image: 'https://file.hstatic.net/1000075078/article/bh-01_a3d2e297bd60454c9a1da42fcd6c7f7f.jpg',
-            rating: 4.8,
-            reviews: 245,
-            distance: 1.2,
-            priceRange: '$$',
-            tags: ['Popular', 'WiFi'],
-            discount: '20% OFF',
-        },
-        {
-            id: 2,
-            name: 'Highlands Coffee',
-            image: 'https://tour3dao.com/wp-content/uploads/2024/12/highland-nha-trang-4.webp',
-            rating: 4.7,
-            reviews: 189,
-            distance: 2.5,
-            priceRange: '$$',
-            tags: ['Fast Delivery'],
-            discount: null,
-        },
-        {
-            id: 3,
-            name: 'Phúc Long Coffee & Tea',
-            image: 'https://winci.com.vn/wp-content/uploads/2024/02/Su-ra-doi-cua-thuong-hieu-Phuc-Long.webp',
-            rating: 4.9,
-            reviews: 312,
-            distance: 0.8,
-            priceRange: '$',
-            tags: ['Best Seller'],
-            discount: '15% OFF',
-        },
-        {
-            id: 4,
-            name: 'Starbucks Reserve',
-            image: 'https://www.cukcuk.vn/wp-content/uploads/2024/09/starbucks-coffee-1.png',
-            rating: 4.6,
-            reviews: 567,
-            distance: 3.2,
-            priceRange: '$$$',
-            tags: ['Premium'],
-            discount: null,
-        },
-    ];
+    // const featuredShops = [
+    //     {
+    //         id: 1,
+    //         name: 'The Coffee House',
+    //         image: 'https://file.hstatic.net/1000075078/article/bh-01_a3d2e297bd60454c9a1da42fcd6c7f7f.jpg',
+    //         rating: 4.8,
+    //         reviews: 245,
+    //         distance: 1.2,
+    //         priceRange: '$$',
+    //         tags: ['Popular', 'WiFi'],
+    //         discount: '20% OFF',
+    //     },
+    //     {
+    //         id: 2,
+    //         name: 'Highlands Coffee',
+    //         image: 'https://tour3dao.com/wp-content/uploads/2024/12/highland-nha-trang-4.webp',
+    //         rating: 4.7,
+    //         reviews: 189,
+    //         distance: 2.5,
+    //         priceRange: '$$',
+    //         tags: ['Fast Delivery'],
+    //         discount: null,
+    //     },
+    //     {
+    //         id: 3,
+    //         name: 'Phúc Long Coffee & Tea',
+    //         image: 'https://winci.com.vn/wp-content/uploads/2024/02/Su-ra-doi-cua-thuong-hieu-Phuc-Long.webp',
+    //         rating: 4.9,
+    //         reviews: 312,
+    //         distance: 0.8,
+    //         priceRange: '$',
+    //         tags: ['Best Seller'],
+    //         discount: '15% OFF',
+    //     },
+    //     {
+    //         id: 4,
+    //         name: 'Starbucks Reserve',
+    //         image: 'https://www.cukcuk.vn/wp-content/uploads/2024/09/starbucks-coffee-1.png',
+    //         rating: 4.6,
+    //         reviews: 567,
+    //         distance: 3.2,
+    //         priceRange: '$$$',
+    //         tags: ['Premium'],
+    //         discount: null,
+    //     },
+    // ];
 
     const popularDrinks = [
         {
@@ -161,6 +163,28 @@ const Home = () => {
         { value: '4.8', label: 'Average Rating' },
     ];
 
+    useEffect(() => {
+        shopsApi
+            .getAll()
+            .then((res) => {
+                const data = res?.data ?? [];
+
+                const featured = [...data]
+                    .sort((a, b) => (b.favorite_count || 0) - (a.favorite_count || 0))
+                    .slice(0, 5);
+
+                setFeaturedShops(featured);
+            })
+            .catch((err) => {
+                console.error(err);
+                message.error('Không thể tải danh sách cửa hàng');
+            });
+    }, []);
+
+    const handleFeatureShopClick = (shopId) => {
+        console.log('shopIddd :', shopId);
+        navigate(`shops/${shopId}`);
+    };
     return (
         <div className='home-page'>
             <section className='hero-section'>
@@ -319,59 +343,57 @@ const Home = () => {
                 </div>
 
                 <div className='shops-grid'>
-                    {featuredShops.map((shop) => (
-                        <div
-                            key={shop.id}
-                            className='shop-card-home'
-                        >
-                            {shop.discount && <div className='discount-badge'>{shop.discount}</div>}
-
-                            <div className='shop-image-home'>
-                                {/* <div className="shop-emoji-home">{shop.image}</div> */}
-                                <img
-                                    src={shop.image}
-                                    alt={shop.name}
-                                    className='shop-photo-home'
-                                />
-                            </div>
-
-                            <div className='shop-info-home'>
-                                <h3 className='shop-name-home'>{shop.name}</h3>
-
-                                <div className='shop-meta-home'>
-                                    <div className='meta-rating'>
-                                        <Star
-                                            size={14}
-                                            fill='currentColor'
-                                        />
-                                        <span>{shop.rating}</span>
-                                        <span className='reviews'>({shop.reviews})</span>
-                                    </div>
-                                    <div className='meta-distance'>
-                                        <MapPin size={14} />
-                                        <span>{shop.distance} km</span>
-                                    </div>
+                    {Array.isArray(featuredShops) &&
+                        featuredShops.map((shop) => (
+                            <div
+                                key={shop.id}
+                                className='shop-card-home'
+                                onClick={() => handleFeatureShopClick(shop.id)}
+                            >
+                                <div className='shop-image-home'>
+                                    <img
+                                        src={shop.img?.[0] || '/fallback.jpg'}
+                                        alt={shop.name}
+                                        className='shop-photo-home'
+                                    />
                                 </div>
 
-                                <div className='shop-tags-home'>
-                                    {shop.tags.map((tag, idx) => (
-                                        <span
-                                            key={idx}
-                                            className='tag-home'
-                                        >
-                                            {tag}
-                                        </span>
-                                    ))}
-                                    <span className='price-range-home'>{shop.priceRange}</span>
-                                </div>
+                                <div className='shop-info-home'>
+                                    <h3 className='shop-name-home'>{shop.name}</h3>
 
-                                <button className='order-btn'>
-                                    Order Now
-                                    <ChevronRight size={16} />
-                                </button>
+                                    <div className='shop-meta-home'>
+                                        <div className='meta-rating'>
+                                            <Heart
+                                                size={14}
+                                                fill='currentColor'
+                                            />
+                                            <span>{shop.favorite_count}</span>
+                                        </div>
+
+                                        <div className='meta-distance'>
+                                            <MapPin size={14} />
+                                            <span>{shop.distance?.text || '--'}</span>
+                                        </div>
+                                    </div>
+
+                                    <div className='shop-tags-home'>
+                                        {(shop.tags ?? []).map((tag, idx) => (
+                                            <span
+                                                key={idx}
+                                                className='tag-home'
+                                            >
+                                                {tag}
+                                            </span>
+                                        ))}
+                                    </div>
+
+                                    <button className='order-btn'>
+                                        Order Now
+                                        <ChevronRight size={16} />
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
                 </div>
             </section>
 

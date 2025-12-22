@@ -478,11 +478,11 @@ section {
     gap: 4px;
     font-size: 14px;
     font-weight: 600;
-    color: #ffb300;
+    color: rgb(253, 126, 147);
 }
 
 .meta-rating svg {
-    color: #ffb300;
+    color: rgb(245, 141, 159);
 }
 
 .meta-rating .reviews {
