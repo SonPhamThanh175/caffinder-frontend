@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import OwnerSidebar from './components/OwnerSidebar/OwnerSidebar';
-import OwnerHeader from './components/OwnerHeader/OwnerHeader';
-import DashboardContent from './pages/DashboardContent/DashboardContent';
-import ShopManagement from './pages/ShopManagement/ShopManagement';
-import BookingsManagement from './pages/BookingsManagement/BookingsManagement';
-import ReviewsManagement from './pages/ReviewsManagement/ReviewsManagement';
-import SettingsPage from './pages/SettingsPage/SettingsPage';
-import CreateShopModal from './components/CreateShopModal/CreateShopModal';
 import ownerServiceApi from '../../api/ownerServiceApi';
+import BookingsManagement from '../../modules/Owner/BookingsManagement/BookingsManagement';
+import DashboardContent from '../../modules/Owner/DashboardContent/DashboardContent';
+import MenusPage from '../../modules/Owner/MenusPage/MenusPage';
+import ReviewsManagement from '../../modules/Owner/ReviewsManagement/ReviewsManagement';
+import SettingsPage from '../../modules/Owner/SettingsPage/SettingsPage';
+import ShopManagement from '../../modules/Owner/ShopManagement/ShopManagement';
+import CreateShopModal from './components/CreateShopModal/CreateShopModal';
+import OwnerHeader from './components/OwnerHeader/OwnerHeader';
+import OwnerSidebar from './components/OwnerSidebar/OwnerSidebar';
 import './style.css';
-import MenuManagement from './pages/MenusPage/MenusPage';
-import MenusPage from './pages/MenusPage/MenusPage';
 
 const OwnerLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -68,6 +67,10 @@ const OwnerLayout = () => {
         loadShops();
     };
 
+    const handleNavigate = (page) => {
+        setCurrentPage(page);
+    };
+
     const renderContent = () => {
         if (loading) {
             return (
@@ -100,7 +103,12 @@ const OwnerLayout = () => {
 
         switch (currentPage) {
             case 'dashboard':
-                return <DashboardContent shopData={selectedShop} />;
+                return (
+                    <DashboardContent 
+                        shopData={selectedShop} 
+                        onNavigate={handleNavigate}
+                    />
+                );
             case 'shop':
                 return (
                     <ShopManagement
@@ -118,7 +126,12 @@ const OwnerLayout = () => {
             case 'settings':
                 return <SettingsPage user={user} />;
             default:
-                return <DashboardContent shopData={selectedShop} />;
+                return (
+                    <DashboardContent 
+                        shopData={selectedShop} 
+                        onNavigate={handleNavigate}
+                    />
+                );
         }
     };
 

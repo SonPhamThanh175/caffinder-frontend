@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Filter, Check, X, Eye, Search } from 'lucide-react';
-import ownerServiceApi from '../../../../api/ownerServiceApi';
+import ownerServiceApi from '../../../api/ownerServiceApi';
 import './style.css';
 
 const BookingsManagement = ({ shopId }) => {

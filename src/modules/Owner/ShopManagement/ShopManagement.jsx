@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Store, MapPin, Clock, Users, Edit2, Save, X } from 'lucide-react';
-import ownerServiceApi from '../../../../api/ownerServiceApi';
+import ownerServiceApi from '../../../api/ownerServiceApi';
 import './style.css';
 
 const ShopManagement = ({ shopData, onUpdate, loadShopDetail }) => {

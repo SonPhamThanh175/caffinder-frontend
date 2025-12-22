@@ -1,17 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Save } from 'lucide-react';
+import { message } from 'antd';
 import './style.css';
-import userApi from '../../../../api/userApi';
+import { updateProfile, clearError } from '../../../../src/store/slices/userSlice';
 
-const SettingsPage = ({ user }) => {
-    console.log(user);
-    
+const SettingsPage = () => {
+  const dispatch = useDispatch();
+  
+  const { user } = useSelector((state) => state.user.current);
+  const loading = useSelector((state) => state.user.loading);
+  const error = useSelector((state) => state.user.error);
+  
   const [formData, setFormData] = useState({
-    name: user?.displayName || '',
+    displayName: user?.displayName || '',
     email: user?.email || '',
-    phone: user?.contactPhone || ''
+    contactPhone: user?.contactPhone || '',
+    avaUrl: user?.avaUrl || ''
   });
-  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        displayName: user.displayName || '',
+        email: user.email || '',
+        contactPhone: user.contactPhone || '',
+        avaUrl: user.avaUrl || ''
+      });
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (error) {
+      message.error(error);
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,15 +44,12 @@ const SettingsPage = ({ user }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     try {
-      setLoading(true);
-      await userApi.updateProfile(formData);
-      alert('Cập nhật thông tin thành công!');
+      await dispatch(updateProfile(formData)).unwrap();
+      message.success('Cập nhật thông tin thành công!');
     } catch (error) {
-      console.error(error);
-    //   alert('Có lỗi xảy ra. Vui lòng thử lại!');
-    } finally {
-      setLoading(false);
+      console.error('Update error:', error);
     }
   };
 
@@ -46,10 +67,10 @@ const SettingsPage = ({ user }) => {
           <form className="settings-form" onSubmit={handleSubmit}>
             <div className="avatar-section">
               <div className="avatar-preview">
-                {user?.avatar ? (
-                  <img src={user.avatar} alt={user.name} />
+                {user?.avaUrl ? (
+                  <img src={user.avaUrl} alt={user.displayName} />
                 ) : (
-                  <span>{user?.name?.charAt(0).toUpperCase()}</span>
+                  <span>{user?.displayName?.charAt(0).toUpperCase()}</span>
                 )}
               </div>
               <div className="avatar-actions">
@@ -64,8 +85,8 @@ const SettingsPage = ({ user }) => {
               <label>Họ và tên</label>
               <input
                 type="text"
-                name="name"
-                value={formData.name}
+                name="displayName"
+                value={formData.displayName}
                 onChange={handleChange}
                 required
               />
@@ -86,8 +107,8 @@ const SettingsPage = ({ user }) => {
               <label>Số điện thoại</label>
               <input
                 type="tel"
-                name="phone"
-                value={formData.phone}
+                name="contactPhone"
+                value={formData.contactPhone}
                 onChange={handleChange}
               />
             </div>

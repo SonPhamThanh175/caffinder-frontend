@@ -65,28 +65,28 @@ const DashboardHome = () => {
   const recentReviews = [
     {
       id: 1,
-      user: 'Alice Brown',
+      user: 'Nguyễn Văn A',
       shop: 'The Coffee House',
       rating: 5,
-      comment: 'Amazing coffee and great service!',
+      comment: 'Quán đẹp!',
       status: 'approved',
       date: '2024-03-15'
     },
     {
       id: 2,
-      user: 'Bob Wilson',
+      user: 'Nguyên Thị B',
       shop: 'Highlands Coffee',
       rating: 4,
-      comment: 'Good quality, fast delivery.',
+      comment: 'Tuyệt.',
       status: 'pending',
       date: '2024-03-14'
     },
     {
       id: 3,
-      user: 'Carol Martinez',
+      user: 'Trần Văn C',
       shop: 'Phúc Long',
       rating: 3,
-      comment: 'Average experience, room for improvement.',
+      comment: 'oke !.',
       status: 'pending',
       date: '2024-03-14'
     }
@@ -95,7 +95,7 @@ const DashboardHome = () => {
   const recentUsers = [
     {
       id: 1,
-      name: 'David Lee',
+      name: 'Nguyễn Văn A',
       email: 'david.lee@example.com',
       role: 'customer',
       orders: 23,
@@ -104,7 +104,7 @@ const DashboardHome = () => {
     },
     {
       id: 2,
-      name: 'Emma Davis',
+      name: 'Nguyên Thị B',
       email: 'emma.davis@example.com',
       role: 'shop_owner',
       orders: 0,
@@ -113,7 +113,7 @@ const DashboardHome = () => {
     },
     {
       id: 3,
-      name: 'Frank Miller',
+      name: 'Trần Văn C',
       email: 'frank.miller@example.com',
       role: 'customer',
       orders: 45,

@@ -2,9 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Coffee, Plus, Edit2, Trash2, Save, X, Search, DollarSign, Upload } from 'lucide-react';
 
 import './MenuStyles.css';
-import ownerServiceApi from './../../../../api/ownerServiceApi';
-import UpLoadService from '../../../../api/UpLoadService';
-
+import ownerServiceApi from '../../../api/ownerServiceApi';
+import UpLoadService from '../../../api/UpLoadService';
 import { message, Popconfirm } from 'antd';
 
 const MenuItemManagement = ({ shopId }) => {

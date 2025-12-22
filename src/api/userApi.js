@@ -14,9 +14,9 @@ const userApi = {
         const url = `api/auth/${userId}`;
         return axiosClient.get(url)
     },
-    async update(userId, data) {
-        const url = `api/users/${userId}`;
-        return axiosClient.put(url, data);
+    async updateProfile(formData) {
+        const url = `api/auth/user/me`;
+        return axiosClient.patch(url, formData);
     }
 }
 
