@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Coffee, Plus, Edit2, Trash2, Save, X, Search, DollarSign } from 'lucide-react';
+import { Coffee, Plus, Edit2, Trash2, Save, X, Search, DollarSign, Upload } from 'lucide-react';
+
 import './MenuStyles.css';
-import ownerServiceApi from '../../../api/ownerServiceApi';
+import ownerServiceApi from './../../../../api/ownerServiceApi';
+import UpLoadService from '../../../../api/UpLoadService';
 import { message, Popconfirm } from 'antd';
 
 const MenuItemManagement = ({ shopId }) => {
@@ -12,6 +14,8 @@ const MenuItemManagement = ({ shopId }) => {
     const [editingId, setEditingId] = useState(null);
     const [showAddForm, setShowAddForm] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [imageFiles, setImageFiles] = useState([]);
+    const [imagePreview, setImagePreview] = useState([]);
     const [formData, setFormData] = useState({
         name: '',
         description: '',
@@ -65,13 +69,15 @@ const MenuItemManagement = ({ shopId }) => {
         e.preventDefault();
         try {
             setLoading(true);
+            let imageUrls = [];
+            if (imageFiles.length > 0) {
+                imageUrls = await UpLoadService.uploadImages(imageFiles);
+            }
             const submitData = {
                 ...formData,
+                img: imageUrls,
                 price: parseFloat(formData.price) || 0,
                 displayOrder: parseInt(formData.displayOrder) || 0,
-                img: Array.isArray(formData.img)
-                    ? formData.img.filter((url) => url.trim() !== '')
-                    : [],
                 tags: Array.isArray(formData.tags)
                     ? formData.tags.filter((tag) => tag.trim() !== '')
                     : [],
@@ -164,6 +170,27 @@ const MenuItemManagement = ({ shopId }) => {
             </div>
         );
     }
+
+    const handleImageUpload = (e) => {
+        const files = Array.from(e.target.files);
+
+        files.forEach((file) => {
+            console.log('File name:', file.name);
+            console.log('File type:', file.type);
+            console.log('File size:', file.size);
+        });
+        setImageFiles((prev) => [...prev, ...files]);
+
+        const previews = files.map((file) => URL.createObjectURL(file));
+        setImagePreview((prev) => [...prev, ...previews]);
+    };
+
+    const removeImage = (index) => {
+        URL.revokeObjectURL(imagePreview[index]);
+
+        setImagePreview((prev) => prev.filter((_, i) => i !== index));
+        setImageFiles((prev) => prev.filter((_, i) => i !== index));
+    };
 
     return (
         <div className='menu-item-container'>
@@ -281,22 +308,42 @@ const MenuItemManagement = ({ shopId }) => {
                                     className='form-input'
                                 />
                             </div>
-                            <div className='form-group full-width'>
-                                <label>URL hình ảnh (phân cách bằng dấu phẩy)</label>
-                                <input
-                                    type='text'
-                                    value={
-                                        Array.isArray(formData.img) ? formData.img.join(', ') : ''
-                                    }
-                                    onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            img: e.target.value.split(',').map((u) => u.trim()),
-                                        })
-                                    }
-                                    placeholder='https://example.com/image.jpg'
-                                    className='form-input'
-                                />
+                            <div className='image-upload-area'>
+                                {imagePreview.length > 0 && (
+                                    <div className='image-preview-grid'>
+                                        {imagePreview.map((preview, index) => (
+                                            <div
+                                                key={index}
+                                                className='image-preview-item'
+                                            >
+                                                <img
+                                                    src={preview}
+                                                    alt={`Preview ${index + 1}`}
+                                                />
+                                                <button
+                                                    type='button'
+                                                    className='remove-image-btn'
+                                                    onClick={() => removeImage(index)}
+                                                >
+                                                    <X size={16} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+
+                                <label className='upload-label'>
+                                    <input
+                                        type='file'
+                                        accept='image/*'
+                                        multiple
+                                        onChange={handleImageUpload}
+                                        style={{ display: 'none' }}
+                                    />
+                                    <Upload size={24} />
+                                    <span>Tải ảnh lên</span>
+                                    <small>PNG, JPG, WEBP (Tối đa 5MB)</small>
+                                </label>
                             </div>
                         </div>
                         <div className='form-actions'>

@@ -8,46 +8,51 @@ const UserDetail = lazy(() => import('../modules/Admin/Users/pages/UserDetail/Us
 const ShopsManagement = lazy(() => import('../modules/Admin/Shops/ShopsManagement'));
 const ShopDetail = lazy(() => import('../modules/Admin/Shops/ShopDetail/ShopDetail'));
 const OrderList = lazy(() => import('../modules/User/Orders/pages/OrderList/OrderList'));
+const ReviewsManagement = lazy(() => import('../modules/Admin/Reviews/ReviewsManagement'));
 
 const AdminRoutes = {
-  path: '/admin',
-  element: <AdminLayout />,
-  children: [
-    {
-      path: 'dashboard',
-      element: <DashboardHome />
-    },
-    {
-      path: 'users',
-      children: [
+    path: '/admin',
+    element: <AdminLayout />,
+    children: [
         {
-          index: true,
-          element: <UserList />
+            path: 'dashboard',
+            element: <DashboardHome />,
         },
         {
-          path: ':id',
-          element: <UserDetail />
-        }
-      ]
-    },
-    {
-      path: 'shops',
-      children: [
-        {
-          index: true,
-          element: <ShopsManagement />
+            path: 'users',
+            children: [
+                {
+                    index: true,
+                    element: <UserList />,
+                },
+                {
+                    path: ':id',
+                    element: <UserDetail />,
+                },
+            ],
         },
         {
-          path: ':shopId',
-          element: <ShopDetail />
-        }
-      ]
-    },
-    {
-      path: 'orders',
-      element: <OrderList />
-    }
-  ]
+            path: 'shops',
+            children: [
+                {
+                    index: true,
+                    element: <ShopsManagement />,
+                },
+                {
+                    path: ':shopId',
+                    element: <ShopDetail />,
+                },
+            ],
+        },
+        {
+            path: 'orders',
+            element: <OrderList />,
+        },
+        {
+            path: 'reviews',
+            element: <ReviewsManagement />,
+        },
+    ],
 };
 
 export default AdminRoutes;

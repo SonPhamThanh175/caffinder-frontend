@@ -44,12 +44,20 @@ export const login = createAsyncThunk(
   }
 );
 
-export const update = createAsyncThunk(
-  'user/update',
-  async (payload) => {
-    const { id, ...userData } = payload;
-    const response = await userApi.update(id, userData);
-    return response.data.userId; 
+export const updateProfile = createAsyncThunk(
+  'user/updateProfile',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const response = await userApi.updateProfile(payload);
+      
+      const currentUser = JSON.parse(localStorage.getItem('user'));
+      const updatedUser = { ...currentUser, ...payload };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      return updatedUser;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Có lỗi xảy ra');
+    }
   }
 );
 
@@ -68,6 +76,8 @@ const userSlice = createSlice({
     settings: {
       showLocationModal: false,
     },
+    loading: false,
+    error: null,
   },
   reducers: {
     logout(state) {
@@ -94,6 +104,9 @@ const userSlice = createSlice({
       state.current.location = action.payload;
       localStorage.setItem('userLocation', JSON.stringify(action.payload));
     },
+    clearError(state) {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -107,11 +120,27 @@ const userSlice = createSlice({
           state.settings.showLocationModal = true;
         }
       })
-      .addCase(update.fulfilled, (state, action) => {
-        state.current = action.payload;
+      .addCase(updateProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.current.user = action.payload;
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
       });
   },
 });
 
-export const { logout, showLocationModal, hideLocationModal, updateLocation } = userSlice.actions;
+export const { 
+  logout, 
+  showLocationModal, 
+  hideLocationModal, 
+  updateLocation,
+  clearError 
+} = userSlice.actions;
+
 export default userSlice.reducer;
