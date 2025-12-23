@@ -18,10 +18,14 @@ import {
 import './style.css';
 import { message } from 'antd';
 import shopsApi from './../../api/shopsApi';
+import { useSelector } from 'react-redux';
 
 const Home = () => {
     const navigate = useNavigate();
     const [featuredShops, setFeaturedShops] = useState([]);
+    const { user } = useSelector((state) => state.user.current);
+    const [lat, setLat] = useState(null);
+    const [lng, setLng] = useState(null);
 
     // const featuredShops = [
     //     {
@@ -164,22 +168,32 @@ const Home = () => {
     ];
 
     useEffect(() => {
-        shopsApi
-            .getAll()
-            .then((res) => {
-                const data = res?.data ?? [];
-
-                const featured = [...data]
-                    .sort((a, b) => (b.favorite_count || 0) - (a.favorite_count || 0))
-                    .slice(0, 5);
-
-                setFeaturedShops(featured);
-            })
-            .catch((err) => {
-                console.error(err);
-                message.error('Không thể tải danh sách cửa hàng');
-            });
+        if (localStorage.getItem('userLocation')) {
+            const { latitude, longitude } = JSON.parse(localStorage.getItem('userLocation'));
+            setLat(latitude);
+            setLng(longitude);
+        }
     }, []);
+
+    useEffect(() => {
+        if (lat && lng) {
+            shopsApi
+                .getAll({ latitude: lat, longitude: lng })
+                .then((res) => {
+                    const data = res?.data ?? [];
+
+                    const featured = [...data]
+                        .sort((a, b) => (b.favorite_count || 0) - (a.favorite_count || 0))
+                        .slice(0, 5);
+
+                    setFeaturedShops(featured);
+                })
+                .catch((err) => {
+                    console.error(err);
+                    message.error('Không thể tải danh sách cửa hàng');
+                });
+        }
+    }, [lat, lng]);
 
     const handleFeatureShopClick = (shopId) => {
         console.log('shopIddd :', shopId);
