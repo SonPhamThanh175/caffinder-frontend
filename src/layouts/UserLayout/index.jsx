@@ -65,6 +65,8 @@ const UserLayout = () => {
 
             dispatch(updateLocation(location));
             dispatch(hideLocationModal());
+            window.location.reload();
+
             console.log('Location saved:', location);
         } catch (error) {
             console.error('Error getting location:', error);

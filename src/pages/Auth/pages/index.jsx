@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { login, register } from '../../../store/slices/userSlice';
 import { FacebookFilled, GoogleOutlined } from '@ant-design/icons';
 import './style.css';
+import { message } from 'antd';
 
 export const LoginPage = () => {
     const [isSignUp, setIsSignUp] = useState(false);
@@ -66,32 +67,31 @@ export const LoginPage = () => {
 
     const handleRegisterSubmit = async (values, { setSubmitting, resetForm }) => {
         const { confirmPassword, ...submitValues } = values;
-        console.log('🚀 Register form submitted:', submitValues);
 
         try {
             const action = register(submitValues);
-            console.log('📤 Dispatching register action...');
-            
+
             const resultAction = await dispatch(action);
-            console.log('📥 Register result:', resultAction);
-            
+            if (!resultAction.error) {
+                message.success('Registration successful!');
+            }
             unwrapResult(resultAction);
-            
-            enqueueSnackbar('☕ Registration successful! Welcome to Caffinder community!', { 
-                variant: 'success' 
+
+            enqueueSnackbar('☕ Registration successful! Welcome to Caffinder community!', {
+                variant: 'success',
             });
-            
+
             resetForm();
             setTimeout(() => {
                 setIsSignUp(false);
                 setIsSwitch(false);
             }, 500);
         } catch (error) {
-            console.error('❌ Register error:', error);
             const errMessage =
                 error.response?.data?.message || error.message || 'Registration failed';
-            console.log('Failed to register : ', errMessage);
             enqueueSnackbar(errMessage, { variant: 'error' });
+
+            message.error(error.message);
         } finally {
             setSubmitting(false);
         }
@@ -107,13 +107,9 @@ export const LoginPage = () => {
 
     return (
         <div className='login-page'>
-            {/* Caffinder Logo */}
-            <div className='caffinder-logo'>
-                ☕ Caffinder
-            </div>
+            <div className='caffinder-logo'>☕ Caffinder</div>
 
             <div className='main-login-page'>
-                {/* Register Form */}
                 <div className={`a-container ${isSwitch && 'is-txl is-z200'}`}>
                     <Formik
                         initialValues={{
@@ -121,19 +117,20 @@ export const LoginPage = () => {
                             displayName: '',
                             password: '',
                             confirmPassword: '',
-                            role: 'user'
+                            role: 'user',
                         }}
                         validationSchema={registerSchema}
                         onSubmit={handleRegisterSubmit}
                         enableReinitialize
                     >
                         {({ isSubmitting }) => (
-                            <Form className='form' id='a-form'>
+                            <Form
+                                className='form'
+                                id='a-form'
+                            >
                                 <h2 className='form_title title'>Join Caffinder</h2>
-                                <span className='form__span'>
-                                    Start your coffee journey today
-                                </span>
-                                
+                                <span className='form__span'>Start your coffee journey today</span>
+
                                 <Field
                                     className='form__input'
                                     name='username'
@@ -145,7 +142,7 @@ export const LoginPage = () => {
                                     component='div'
                                     className='text-danger'
                                 />
-                                
+
                                 <Field
                                     className='form__input displayName'
                                     name='displayName'
@@ -157,7 +154,7 @@ export const LoginPage = () => {
                                     component='div'
                                     className='text-danger'
                                 />
-                                
+
                                 <Field
                                     className='form__input password'
                                     name='password'
@@ -169,7 +166,7 @@ export const LoginPage = () => {
                                     component='div'
                                     className='text-danger'
                                 />
-                                
+
                                 <Field
                                     className='form__input'
                                     name='confirmPassword'
@@ -208,7 +205,6 @@ export const LoginPage = () => {
                     </Formik>
                 </div>
 
-                {/* Login Form */}
                 <div className={`b-container ${isSwitch && 'is-txl'}`}>
                     <Formik
                         initialValues={{
@@ -221,16 +217,16 @@ export const LoginPage = () => {
                         {({ isSubmitting }) => (
                             <Form className='form'>
                                 <h2 className='form_title title'>Welcome Back</h2>
-                                
+
                                 <div className='form__icons'>
-                                    <div 
+                                    <div
                                         className='form__icon'
                                         onClick={HandleLoginWithFacebook}
                                         title='Continue with Facebook'
                                     >
                                         <FacebookFilled style={{ fontSize: '24px', color: '#FFFFFF' }} />
                                     </div>
-                                    <div 
+                                    <div
                                         className='form__icon'
                                         onClick={HandleLoginWithGoogle}
                                         title='Continue with Google'
@@ -238,9 +234,9 @@ export const LoginPage = () => {
                                         <GoogleOutlined style={{ fontSize: '24px', color: '#FFFFFF' }} />
                                     </div>
                                 </div>
-                                
+
                                 <span className='form__span'>or sign in with your account</span>
-                                
+
                                 <Field
                                     className='form__input'
                                     name='username'
@@ -252,7 +248,7 @@ export const LoginPage = () => {
                                     component='div'
                                     className='text-danger'
                                 />
-                                
+
                                 <Field
                                     className='form__input'
                                     name='password'
@@ -264,11 +260,14 @@ export const LoginPage = () => {
                                     component='div'
                                     className='text-danger'
                                 />
-                                
-                                <a href='/forgotPassword' className='form__link'>
+
+                                <a
+                                    href='/forgotPassword'
+                                    className='form__link'
+                                >
                                     Forgot your password?
                                 </a>
-                                
+
                                 <button
                                     className='form__button button submit'
                                     type='submit'
@@ -281,37 +280,45 @@ export const LoginPage = () => {
                     </Formik>
                 </div>
 
-                {/* Switch Panel */}
-                <div className={isSwitch ? 'switch is-gx is-txr' : 'switch'} id='switch-cnt'>
+                <div
+                    className={isSwitch ? 'switch is-gx is-txr' : 'switch'}
+                    id='switch-cnt'
+                >
                     <div className={`switch__circle ${isSwitch && 'is-txr'}`}></div>
                     <div
                         className={`switch__circle switch__circle--t ${isSwitch && 'is-txr'}`}
                     ></div>
-                    
-                    {/* Welcome Back Panel */}
+
                     <div
                         className={`switch__container ${isSwitch && 'is-hidden'}`}
                         id='switch-c1'
                     >
                         <h2 className='switch__title title'>Hello, Coffee Lover!</h2>
                         <p className='switch__description description'>
-                            Don't have an account yet? Join our community and discover amazing coffee shops near you!
+                            Don't have an account yet? Join our community and discover amazing
+                            coffee shops near you!
                         </p>
-                        <button onClick={changeForm} className='switch__button button switch-btn'>
+                        <button
+                            onClick={changeForm}
+                            className='switch__button button switch-btn'
+                        >
                             SIGN UP
                         </button>
                     </div>
-                    
-                    {/* Hello Friend Panel */}
+
                     <div
                         className={`switch__container ${!isSwitch && 'is-hidden'}`}
                         id='switch-c2'
                     >
                         <h2 className='switch__title title'>Welcome Back!</h2>
                         <p className='switch__description description'>
-                            Already have an account? Sign in to continue your coffee discovery journey!
+                            Already have an account? Sign in to continue your coffee discovery
+                            journey!
                         </p>
-                        <button onClick={changeForm} className='switch__button button switch-btn'>
+                        <button
+                            onClick={changeForm}
+                            className='switch__button button switch-btn'
+                        >
                             SIGN IN
                         </button>
                     </div>

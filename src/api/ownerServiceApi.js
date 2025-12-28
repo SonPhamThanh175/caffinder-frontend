@@ -33,9 +33,9 @@ const ownerServiceApi = {
         return axiosClient.patch(url);
     },
 
-    async rejectBooking(id) {
+    async rejectBooking(id, data) {
         const url = `/api/bookings/${id}/reject`;
-        return axiosClient.patch(url);
+        return axiosClient.patch(url, data);
     },
 
     async replyReview(id, reply) {
