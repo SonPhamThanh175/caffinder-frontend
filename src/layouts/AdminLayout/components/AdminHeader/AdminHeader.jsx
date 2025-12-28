@@ -71,14 +71,14 @@ const AdminHeader = () => {
             {darkMode ? <Sun size={20} /> : <Moon size={20} />}
           </button>
 
-          <button 
+          {/* <button 
             className="admin-icon-btn"
             onClick={() => navigate('/admin/notifications')}
             title="Notifications"
           >
             <Bell size={20} />
             <span className="notification-badge"></span>
-          </button>
+          </button> */}
 
           <div className="admin-user-menu-wrapper">
             <button 

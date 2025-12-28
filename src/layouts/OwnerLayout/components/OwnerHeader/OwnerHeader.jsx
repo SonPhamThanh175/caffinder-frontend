@@ -137,7 +137,7 @@ const OwnerHeader = ({
         )}
 
         <div className="header-notification">
-          <button 
+          {/* <button 
             className="notification-btn"
             onClick={() => setShowNotifications(!showNotifications)}
           >
@@ -145,7 +145,7 @@ const OwnerHeader = ({
             {unreadCount > 0 && (
               <span className="notification-badge">{unreadCount}</span>
             )}
-          </button>
+          </button> */}
           
           {showNotifications && (
             <>

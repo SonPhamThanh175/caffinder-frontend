@@ -163,14 +163,14 @@ const UserLayout = () => {
                         </button>
 
                         {/* Notifications Button */}
-                        <button
+                        {/* <button
                             className='icon-btn'
                             onClick={() => navigate('/user/notifications')}
                             title='Notifications'
                         >
                             <Bell size={20} />
                             <span className='icon-badge'></span>
-                        </button>
+                        </button> */}
 
                         {/* User Menu */}
                         <div className='user-menu-wrapper'>
