@@ -6,6 +6,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { loginSchema, registerSchema } from '../validationSchema';
 import { useNavigate } from 'react-router-dom';
 import { login, register } from '../../../store/slices/userSlice';
+import { FacebookFilled, GoogleOutlined } from '@ant-design/icons';
 import './style.css';
 
 export const LoginPage = () => {
@@ -22,46 +23,46 @@ export const LoginPage = () => {
     const dispatch = useDispatch();
     const { enqueueSnackbar } = useSnackbar();
 
-const handleLoginSubmit = async (values, { setSubmitting }) => {
-    console.log('🚀 Form submitted with values:', values);
-    
-    try {
-        const action = login(values);
-        console.log('📤 Dispatching action...');
+    const handleLoginSubmit = async (values, { setSubmitting }) => {
+        console.log('🚀 Form submitted with values:', values);
         
-        const resultAction = await dispatch(action);
-        console.log('📥 Result action:', resultAction);
-        
-        const result = unwrapResult(resultAction);
-        console.log('✅ Login result:', result);
+        try {
+            const action = login(values);
+            console.log('📤 Dispatching action...');
+            
+            const resultAction = await dispatch(action);
+            console.log('📥 Result action:', resultAction);
+            
+            const result = unwrapResult(resultAction);
+            console.log('✅ Login result:', result);
 
-        enqueueSnackbar('☕ Welcome back to Caffinder!', { variant: 'success' });
+            enqueueSnackbar('☕ Welcome back to Caffinder!', { variant: 'success' });
 
-        const userRole = result.user.role;
-        console.log('👤 User role:', userRole);
-        
-        switch (userRole) {
-            case 'admin':
-                navigate('/admin/dashboard');
-                break;
-            case 'owner':
-                navigate('/owner/dashboard');
-                break;
-            case 'user':
-                navigate('/user');
-                break;
-            default:
-                navigate('/');
+            const userRole = result.user.role;
+            console.log('👤 User role:', userRole);
+            
+            switch (userRole) {
+                case 'admin':
+                    navigate('/admin/dashboard');
+                    break;
+                case 'owner':
+                    navigate('/owner/dashboard');
+                    break;
+                case 'user':
+                    navigate('/user');
+                    break;
+                default:
+                    navigate('/');
+            }
+        } catch (error) {
+            console.error('❌ Login error:', error);
+            const errMessage = error.response?.data?.message || error.message || 'Login failed';
+            console.log('Failed to login : ', errMessage);
+            enqueueSnackbar(errMessage, { variant: 'error' });
+        } finally {
+            setSubmitting(false);
         }
-    } catch (error) {
-        console.error('❌ Login error:', error);
-        const errMessage = error.response?.data?.message || error.message || 'Login failed';
-        console.log('Failed to login : ', errMessage);
-        enqueueSnackbar(errMessage, { variant: 'error' });
-    } finally {
-        setSubmitting(false);
-    }
-};
+    };
 
     const handleRegisterSubmit = async (values, { setSubmitting, resetForm }) => {
         const { confirmPassword, ...submitValues } = values;
@@ -214,7 +215,7 @@ const handleLoginSubmit = async (values, { setSubmitting }) => {
                             username: '',
                             password: '',
                         }}
-                        // validationSchema={loginSchema}
+                        validationSchema={loginSchema}
                         onSubmit={handleLoginSubmit}
                     >
                         {({ isSubmitting }) => (
@@ -227,24 +228,14 @@ const handleLoginSubmit = async (values, { setSubmitting }) => {
                                         onClick={HandleLoginWithFacebook}
                                         title='Continue with Facebook'
                                     >
-                                        <box-icon
-                                            name='facebook-square'
-                                            type='logo'
-                                            color='#FFFFFF'
-                                            size='md'
-                                        ></box-icon>
+                                        <FacebookFilled style={{ fontSize: '24px', color: '#FFFFFF' }} />
                                     </div>
                                     <div 
                                         className='form__icon'
                                         onClick={HandleLoginWithGoogle}
                                         title='Continue with Google'
                                     >
-                                        <box-icon
-                                            name='google'
-                                            type='logo'
-                                            color='#FFFFFF'
-                                            size='md'
-                                        ></box-icon>
+                                        <GoogleOutlined style={{ fontSize: '24px', color: '#FFFFFF' }} />
                                     </div>
                                 </div>
                                 
