@@ -200,9 +200,9 @@
     line-height: 1.2;
     color: #3E2723;
     margin-bottom: 10px;
-    background: linear-gradient(135deg, #6B4423 0%, #8B5A2B 100%);
+    /* background: linear-gradient(135deg, #6B4423 0%, #8B5A2B 100%);
     -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    -webkit-text-fill-color: transparent; */
     background-clip: text;
 }
 

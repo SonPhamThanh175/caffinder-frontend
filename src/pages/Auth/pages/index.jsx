@@ -6,6 +6,7 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { loginSchema, registerSchema } from '../validationSchema';
 import { useNavigate } from 'react-router-dom';
 import { login, register } from '../../../store/slices/userSlice';
+import { FacebookFilled, GoogleOutlined } from '@ant-design/icons';
 import './style.css';
 import { message } from 'antd';
 
@@ -25,18 +26,22 @@ export const LoginPage = () => {
 
     const handleLoginSubmit = async (values, { setSubmitting }) => {
         console.log('🚀 Form submitted with values:', values);
-
+        
         try {
             const action = login(values);
-
+            console.log('📤 Dispatching action...');
+            
             const resultAction = await dispatch(action);
-
+            console.log('📥 Result action:', resultAction);
+            
             const result = unwrapResult(resultAction);
+            console.log('✅ Login result:', result);
 
             enqueueSnackbar('☕ Welcome back to Caffinder!', { variant: 'success' });
 
             const userRole = result.user.role;
-
+            console.log('👤 User role:', userRole);
+            
             switch (userRole) {
                 case 'admin':
                     navigate('/admin/dashboard');
@@ -51,9 +56,10 @@ export const LoginPage = () => {
                     navigate('/');
             }
         } catch (error) {
+            console.error('❌ Login error:', error);
             const errMessage = error.response?.data?.message || error.message || 'Login failed';
+            console.log('Failed to login : ', errMessage);
             enqueueSnackbar(errMessage, { variant: 'error' });
-            message.error(errMessage);
         } finally {
             setSubmitting(false);
         }
@@ -205,6 +211,7 @@ export const LoginPage = () => {
                             username: '',
                             password: '',
                         }}
+                        validationSchema={loginSchema}
                         onSubmit={handleLoginSubmit}
                     >
                         {({ isSubmitting }) => (
@@ -217,24 +224,14 @@ export const LoginPage = () => {
                                         onClick={HandleLoginWithFacebook}
                                         title='Continue with Facebook'
                                     >
-                                        <box-icon
-                                            name='facebook-square'
-                                            type='logo'
-                                            color='#FFFFFF'
-                                            size='md'
-                                        ></box-icon>
+                                        <FacebookFilled style={{ fontSize: '24px', color: '#FFFFFF' }} />
                                     </div>
                                     <div
                                         className='form__icon'
                                         onClick={HandleLoginWithGoogle}
                                         title='Continue with Google'
                                     >
-                                        <box-icon
-                                            name='google'
-                                            type='logo'
-                                            color='#FFFFFF'
-                                            size='md'
-                                        ></box-icon>
+                                        <GoogleOutlined style={{ fontSize: '24px', color: '#FFFFFF' }} />
                                     </div>
                                 </div>
 

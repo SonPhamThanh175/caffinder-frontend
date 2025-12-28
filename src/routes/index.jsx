@@ -7,8 +7,8 @@ import OwnerRoutes from './OwnerRoutes';
 import UserRoutes from './UserRoutes';
 import NotFound from '../pages/NotFound/NotFound';
 import { LoginPage } from '../pages/Auth/pages/index';
-// import UnauthorizedPage from '../pages/UnauthorizedPage';
-
+import AboutUs from '../pages/AboutUs';
+import Contact from '../pages/Contact';
 const LoadingFallback = () => (
   <div className="flex items-center justify-center min-h-screen">
     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -84,6 +84,14 @@ const router = createBrowserRouter([
   {
     path: '*',
     element: <NotFound />
+  },
+  {
+    path: '/about',
+    element: <AboutUs />
+  },
+  {
+    path: '/contact',
+    element: <Contact  />
   }
 ]);
 
